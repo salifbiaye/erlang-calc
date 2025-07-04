@@ -11,7 +11,7 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarHeader, SidebarMenuButton,
-    SidebarRail,
+    SidebarRail, useSidebar,
 } from "@/components/ui/sidebar"
 
 // This is sample data.
@@ -26,6 +26,7 @@ import {
     MessageSquare,
     MapPinned, Signal,
 } from "lucide-react"
+import {cn} from "@/lib/utils";
 
 const data = {
     user: {
@@ -80,7 +81,19 @@ const data = {
             items: [
                 {
                     title: "Mon profil",
-                    url: "/settings",
+                    url: "/settings/profile",
+                },
+                {
+                    title: "Sécurité",
+                    url: "/settings/security",
+                },
+                {
+                    title: "Notifications",
+                    url: "/settings/notifications",
+                },
+                {
+                    title: "Préférences",
+                    url: "/settings/preferences",
                 },
             ],
         },
@@ -102,14 +115,20 @@ const data = {
 
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const { state } = useSidebar()
+    const isCollapsed = state === "collapsed"
+
     return (
         <Sidebar className={"dark:border-gray-900/70 text-white "} collapsible="icon" {...props}>
             <SidebarHeader className={"dark:bg-gray-900/70 bg-brand-950"}>
-                <SidebarMenuButton className="flex items-center bg-white/5 p-8 gap-2 hover:bg-white/5 hover:text-white">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg ">
+                <SidebarMenuButton className={cn("flex items-center border-b border-gray-700  p-8 gap-2 hover:bg-white/5 hover:text-white", !isCollapsed ? "rounded-none" :"rounded-lg border-none bg-primary")}>
+                    <div className={cn("flex h-8 w-8 items-center  justify-center rounded-lg ",!isCollapsed ? " bg-primary" : "bg-transparent")}>
                         <Signal className="h-5 w-5 text-white"/>
                     </div>
-                    <span className="text-xl font-bold dark:text-white ">Erlang-Calc</span>
+                    <div className={"flex flex-col"}>
+                        <span className="text-lg font-bold dark:text-white  ">Erlang-Calc</span>
+                        <span className="text-xs text-gray-400 hidden md:inline-block"> simulations & calculs</span>
+                    </div>
                 </SidebarMenuButton>
             </SidebarHeader>
             <SidebarContent className={"dark:bg-gray-900/70 bg-brand-950 text-white"}>
