@@ -1,11 +1,11 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Calculator} from "lucide-react";
+import {Calculator, Save} from "lucide-react";
 import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 
-export default function FormulaireParametreCalculate( {calculationTypes, calculationType, setCalculationType, currentCalculation, formData, setFormData, handleInputChange, handleCalculate, selectedZone}: {calculationTypes: any[], calculationType: string, setCalculationType: (type: string) => void, currentCalculation: any, formData: any, setFormData: (data: any) => void, handleInputChange: (fieldId: string, value: string) => void, handleCalculate: () => void, selectedZone: any}) {
+export default function FormulaireParametreCalculate( {calculationTypes, calculationType, setCalculationType, currentCalculation, formData, setFormData, handleInputChange, handleCalculate, handleSave, selectedZone}: {calculationTypes: any[], calculationType: string, setCalculationType: (type: string) => void, currentCalculation: any, formData: any, setFormData: (data: any) => void, handleInputChange: (fieldId: string, value: string) => void, handleCalculate: () => void, handleSave: () => void, selectedZone: any}) {
     return (
         <div className="lg:col-span-1 xl:col-span-1">
             <Card className="dark:bg-slate-800/30 dark:border-slate-700/50">
@@ -58,20 +58,31 @@ export default function FormulaireParametreCalculate( {calculationTypes, calcula
                                 </div>
                             ))}
 
-                            <Button
-                                className="w-full bg-blue-600 hover:bg-blue-700 dark:text-white"
-                                onClick={handleCalculate}
-                                disabled={!selectedZone}
-                            >
-                                <currentCalculation.icon className="mr-2 h-4 w-4"/>
-                                Calculer les résultats
-                            </Button>
+                            <div className="space-y-3">
+                                <Button
+                                    className="w-full bg-blue-600 hover:bg-blue-700 dark:text-white"
+                                    onClick={handleCalculate}
+                                    disabled={!selectedZone}
+                                >
+                                    <currentCalculation.icon className="mr-2 h-4 w-4"/>
+                                    Calculer les résultats
+                                </Button>
 
-                            {!selectedZone && (
-                                <p className="text-xs text-amber-400 text-center">
-                                    ⚠️ Veuillez sélectionner une zone pour continuer
-                                </p>
-                            )}
+                                <Button
+                                    className="w-full bg-green-600 hover:bg-green-700 dark:text-white"
+                                    onClick={handleSave}
+                                    disabled={!selectedZone}
+                                >
+                                    <Save className="mr-2 h-4 w-4"/>
+                                    Sauvegarder la simulation
+                                </Button>
+
+                                {!selectedZone && (
+                                    <p className="text-xs text-amber-400 text-center">
+                                        ⚠️ Veuillez sélectionner une zone pour continuer
+                                    </p>
+                                )}
+                            </div>
                         </>
                     )}
                 </CardContent>
