@@ -8,7 +8,7 @@ import {
     CommandItem,
     CommandList
 } from "@/components/ui/command"
-import { Calculator, FileText, LayoutDashboard, MessageSquare, Settings2, Share2 } from "lucide-react"
+import { Calculator, FileText, LayoutDashboard,  Settings2, Share2 } from "lucide-react"
 import { useState } from "react"
 
 const routes = [
@@ -50,19 +50,24 @@ export default function SearchCommand() {
 
     return (
         <>
-            <Command className="rounded-lg bg-gray-800">
+            <Command className="rounded-lg bg-gray-100 dark:bg-gray-800">
                 <CommandInput 
                     placeholder="Rechercher ..." 
-                    className="h-9 "
+                    className="h-9 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     onFocus={() => setOpen(true)}
                 />
             </Command>
 
-            <CommandDialog open={open} onOpenChange={setOpen} className="dark:bg-gray-900">
-                <CommandInput placeholder="Tapez une commande ou recherchez..." />
-                <CommandList>
-                    <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
-                    <CommandGroup heading="Navigation">
+            <CommandDialog open={open} onOpenChange={setOpen} className="bg-white dark:bg-gray-900">
+                <CommandInput 
+                    placeholder="Tapez une commande ou recherchez..." 
+                    className="text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                />
+                <CommandList className="text-gray-900 dark:text-white">
+                    <CommandEmpty className="text-gray-500 dark:text-gray-400">
+                        Aucun résultat trouvé.
+                    </CommandEmpty>
+                    <CommandGroup heading="Navigation" className="text-gray-700 dark:text-gray-300">
                         {routes.map((route) => (
                             <CommandItem
                                 key={route.url}
@@ -70,11 +75,14 @@ export default function SearchCommand() {
                                     router.push(route.url)
                                     setOpen(false)
                                 }}
+                                className="focus:bg-gray-100 dark:focus:bg-gray-800"
                             >
-                                <route.icon className="mr-2 h-4 w-4" />
+                                <route.icon className="mr-2 h-4 w-4 text-gray-500 dark:text-gray-400" />
                                 <div>
-                                    <div className="font-medium">{route.title}</div>
-                                    <div className="text-sm text-muted-foreground">
+                                    <div className="font-medium text-gray-900 dark:text-white">
+                                        {route.title}
+                                    </div>
+                                    <div className="text-sm text-gray-500 dark:text-gray-400">
                                         {route.description}
                                     </div>
                                 </div>
