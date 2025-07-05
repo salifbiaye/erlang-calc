@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/sidebar"
 
 export function NavMain({
-    items,
-}: {
+                            items,
+                        }: {
     items: {
         title: string
         url: string
@@ -43,12 +43,12 @@ export function NavMain({
                     const isActive = pathname === item.url || item.items?.some(subItem => subItem.url === pathname)
                     
                     return (
-                        <Collapsible
-                            key={item.title}
-                            asChild
+                    <Collapsible
+                        key={item.title}
+                        asChild
                             defaultOpen={isActive}
-                            className="group/collapsible"
-                        >
+                        className="group/collapsible"
+                    >
                             <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
                                     <SidebarMenuButton 
@@ -57,12 +57,12 @@ export function NavMain({
                                             isActive ? "bg-white/10 font-medium" : ""
                                         }`}
                                     >
-                                        {item.icon && <item.icon />}
-                                        <span>{item.title}</span>
-                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                    </SidebarMenuButton>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent>
+                                    {item.icon && <item.icon />}
+                                    <span>{item.title}</span>
+                                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                </SidebarMenuButton>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
                                     <SidebarMenuSub>
                                         {item.items?.map((subItem) => {
                                             const isSubItemActive = pathname === subItem.url
@@ -76,16 +76,16 @@ export function NavMain({
                                                         }`}
                                                     >
                                                         <Link href={subItem.url}>
-                                                            <span>{subItem.title}</span>
+                                                    <span>{subItem.title}</span>
                                                         </Link>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
+                                            </SidebarMenuSubButton>
+                                        </SidebarMenuSubItem>
                                             )
                                         })}
-                                    </SidebarMenuSub>
-                                </CollapsibleContent>
-                            </SidebarMenuItem>
-                        </Collapsible>
+                                </SidebarMenuSub>
+                            </CollapsibleContent>
+                        </SidebarMenuItem>
+                    </Collapsible>
                     )
                 })}
             </SidebarMenu>

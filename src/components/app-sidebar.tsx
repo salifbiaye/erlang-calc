@@ -27,96 +27,100 @@ import {
     MapPinned, Signal,
 } from "lucide-react"
 import {cn} from "@/lib/utils";
+import {useCurrentUser} from "@/services/auth.service";
 
-const data = {
-    user: {
-        name: "salifbiaye",
-        email: "salif@example.com",
-        avatar: "/avatars/salif.jpg",
-    },
 
-    navMain: [
-        {
-            title: "Dashboard",
-            url: "/dashboard",
-            icon: LayoutDashboard,
-            items: [
-                {
-                    title: "Vue d'ensemble",
-                    url: "/dashboard",
-                },
-            ],
-        },
-        {
-            title: "Calculer",
-            url: "/calculate",
-            icon: Calculator,
-            items: [
-                {
-                    title: "Calculer un coût",
-                    url: "/calculate",
-                },
-            ],
-        },
-        {
-            title: "Simulations",
-            url: "/simulations",
-            icon: FileText,
-            items: [
-                {
-                    title: "Mes simulations",
-                    url: "/simulations",
-                },
-                {
-                    title: "Partager avec moi",
-                    url: "/simulations/share",
-                    icon: Share2,
-                },
-            ],
-        },
-        {
-            title: "Paramètres",
-            url: "/settings",
-            icon: Settings2,
-            items: [
-                {
-                    title: "Mon profil",
-                    url: "/settings/profile",
-                },
-                {
-                    title: "Sécurité",
-                    url: "/settings/security",
-                },
-                {
-                    title: "Notifications",
-                    url: "/settings/notifications",
-                },
-                {
-                    title: "Préférences",
-                    url: "/settings/preferences",
-                },
-            ],
-        },
-    ],
-    projects: [
-        {
-            name: "Simulation Pikine",
-            url: "/simulations/abc123",
-            icon: MapPinned,
-        },
-        {
-            name: "Simulation Rufisque",
-            url: "/simulations/xyz456",
-            icon: MessageSquare,
-        },
-    ],
-}
 
 
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { state } = useSidebar()
     const isCollapsed = state === "collapsed"
+    const user = useCurrentUser()
+    console.log("Current User:", user)
+    const data = {
+        user: {
+            name: "salifbiaye",
+            email: "salif@example.com",
+            avatar: "/avatars/salif.jpg",
+        },
+
+        navMain: [
+            {
+                title: "Dashboard",
+                url: "/dashboard",
+                icon: LayoutDashboard,
+                items: [
+                    {
+                        title: "Vue d'ensemble",
+                        url: "/dashboard",
+                    },
+                ],
+            },
+            {
+                title: "Calculer",
+                url: "/calculate",
+                icon: Calculator,
+                items: [
+                    {
+                        title: "Calculer un coût",
+                        url: "/calculate",
+                    },
+                ],
+            },
+            {
+                title: "Simulations",
+                url: "/simulations",
+                icon: FileText,
+                items: [
+                    {
+                        title: "Mes simulations",
+                        url: "/simulations",
+                    },
+                    {
+                        title: "Partager avec moi",
+                        url: "/simulations/share",
+                        icon: Share2,
+                    },
+                ],
+            },
+            {
+                title: "Paramètres",
+                url: "/settings",
+                icon: Settings2,
+                items: [
+                    {
+                        title: "Mon profil",
+                        url: "/settings/profile",
+                    },
+                    {
+                        title: "Sécurité",
+                        url: "/settings/security",
+                    },
+                    {
+                        title: "Notifications",
+                        url: "/settings/notifications",
+                    },
+                    {
+                        title: "Préférences",
+                        url: "/settings/preferences",
+                    },
+                ],
+            },
+        ],
+        projects: [
+            {
+                name: "Simulation Pikine",
+                url: "/simulations/abc123",
+                icon: MapPinned,
+            },
+            {
+                name: "Simulation Rufisque",
+                url: "/simulations/xyz456",
+                icon: MessageSquare,
+            },
+        ],
+    }
 
     return (
         <Sidebar className={"dark:border-gray-900/70 text-white "} collapsible="icon" {...props}>

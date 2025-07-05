@@ -28,9 +28,9 @@ const Map = dynamic(
 )
 
 export function InteractiveMap({ selectedZone, className = "h-[400px]" }: InteractiveMapProps) {
-  return (
+    return (
     <div className={className}>
       <Map selectedZone={selectedZone} />
-    </div>
-  )
+        </div>
+    )
 }

@@ -1,16 +1,42 @@
 "use client";
-import Checkbox from "@/components/form/input/Checkbox";
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
-
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import React, { useState } from "react";
-import {ChevronLeftIcon, EyeClosedIcon, EyeIcon} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import { ChevronLeftIcon, EyeClosedIcon, EyeIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useLogin } from "@/services/auth.service";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginFormData, loginSchema } from "@/schemas/auth.schema";
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { mutate: login, isPending, isError, error } = useLogin();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema),
+    });
+
+    const onSubmit = (data: LoginFormData) => {
+        login(data, {
+            onSuccess: () => {
+                router.push("/dashboard");
+            },
+        });
+    };
+
+    const handleSocialLogin = (provider: "google" | "github") => {
+        router.push(`/auth/${provider}`);
+    };
+
     return (
         <div className="flex flex-col flex-1 lg:w-1/2 w-full">
             <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
@@ -32,9 +58,38 @@ export default function Login() {
                             Entrez votre email et mot de passe pour vous connecter !
                         </p>
                     </div>
+
+                    {searchParams.get("verified") === "true" && (
+                        <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <p className="text-green-600 dark:text-green-400 text-center">
+                                Email vérifié avec succès ! Vous pouvez maintenant vous connecter.
+                            </p>
+                        </div>
+                    )}
+
+                    {searchParams.get("reset") === "success" && (
+                        <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <p className="text-green-600 dark:text-green-400 text-center">
+                                Mot de passe réinitialisé avec succès !
+                            </p>
+                        </div>
+                    )}
+
+                    {searchParams.get("registered") === "true" && (
+                        <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <p className="text-green-600 dark:text-green-400 text-center">
+                                Inscription réussie ! Veuillez vérifier votre email pour activer votre compte.
+                            </p>
+                        </div>
+                    )}
+
                     <div>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-                            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <button
+                                type="button"
+                                onClick={() => handleSocialLogin("google")}
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10"
+                            >
                                 <svg
                                     width="20"
                                     height="20"
@@ -61,7 +116,11 @@ export default function Login() {
                                 </svg>
                                 Se connecter avec Google
                             </button>
-                            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <button
+                                type="button"
+                                onClick={() => handleSocialLogin("github")}
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10"
+                            >
                                 <svg
                                     width="21"
                                     className="fill-current"
@@ -85,60 +144,83 @@ export default function Login() {
                                 </span>
                             </div>
                         </div>
-                        <form>
-                            <div className="space-y-6">
-                                <div>
-                                    <Label>
-                                        Email <span className="text-error-500">*</span>{" "}
-                                    </Label>
-                                    <Input placeholder="info@gmail.com" type="email" />
-                                </div>
-                                <div>
-                                    <Label>
-                                        Mot de passe <span className="text-error-500">*</span>{" "}
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            type={showPassword ? "text" : "password"}
-                                            placeholder="Entrez votre mot de passe"
-                                        />
-                                        <span
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                                        >
-                                            {showPassword ? (
-                                                <EyeIcon />
-                                            ) : (
-                                                <EyeClosedIcon  />
-                                            )}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <Checkbox checked={isChecked} onChange={setIsChecked} />
-                                        <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                                            Rester connecté
-                                        </span>
-                                    </div>
-                                    <Link
-                                        href="/reset-password"
-                                        className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                                    >
-                                        Mot de passe oublié ?
-                                    </Link>
-                                </div>
-                                <div>
-                                    <Button className="w-full" size="sm">
-                                        Se connecter
-                                    </Button>
-                                </div>
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 ">
+                            <div>
+                                <Label>
+                                    Email <span className="text-red-500 py-2 ">*</span>{" "}
+                                </Label>
+                                <Input
+                                    placeholder="info@gmail.com"
+                                    type="email"
+                                    {...register("email")}
+                                    error={errors.email?.message}
+                                />
+                                {errors.email && (
+                                    <p className="mt-1 text-sm text-red-500">
+                                        {errors.email.message}
+                                    </p>
+                                )}
                             </div>
+                            <div>
+                                <Label>
+                                    Mot de passe <span className="text-red-500 py-2">*</span>{" "}
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Entrez votre mot de passe"
+                                        {...register("password")}
+                                        error={errors.password?.message}
+                                    />
+                                    <span
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                                    >
+                                        {showPassword ? (
+                                            <EyeIcon className="h-4 w-4" />
+                                        ) : (
+                                            <EyeClosedIcon className="h-4 w-4" />
+                                        )}
+                                    </span>
+                                </div>
+                                {errors.password && (
+                                    <p className="mt-1 text-sm text-red-500">
+                                        {errors.password.message}
+                                    </p>
+                                )}
+                            </div>
+
+                            {isError && (
+                                <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                    <p className="text-red-600 dark:text-red-400 text-center">
+                                        {error instanceof Error
+                                            ? error.message
+                                            : "Une erreur est survenue lors de la connexion"}
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="flex items-center justify-between">
+                                <Link
+                                    href="/forgot-password"
+                                    className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                                >
+                                    Mot de passe oublié ?
+                                </Link>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={isPending}
+                                className="w-full"
+                            >
+                                {isPending ? "Connexion en cours..." : "Se connecter"}
+                            </Button>
                         </form>
 
                         <div className="mt-5">
                             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                                Vous n&apos;avez pas de compte ? {""}
+                                Vous n&apos;avez pas de compte ?{" "}
                                 <Link
                                     href="/register"
                                     className="text-brand-500 hover:text-brand-600 dark:text-brand-400"

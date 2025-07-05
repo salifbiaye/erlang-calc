@@ -1,13 +1,7 @@
 "use client"
 
-import {
-    BadgeCheck,
-    Bell,
-    ChevronsUpDown,
-    CreditCard,
-    LogOut,
-    Sparkles,
-} from "lucide-react"
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 import {
     Avatar,
@@ -29,16 +23,15 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
+import { useAuthStore } from "@/store/auth.store"
 
-export function NavUser({
-                            user,
-                        }: {
-    user: {
-        name: string
-        email: string
-        avatar: string
+export function NavUser() {
+    const { user, logout, isAuthenticated } = useAuthStore()
+    const router = useRouter()
+    
+    if (!isAuthenticated || !user) {
+        return null
     }
-}) {
     const { isMobile } = useSidebar()
 
     return (
@@ -51,11 +44,13 @@ export function NavUser({
                             className="hover:bg-white/10 hover:text-white data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg bg-white/10">
-                                <AvatarImage src={user.avatar} alt={user.name} />
-                                <AvatarFallback className="rounded-lg bg-white/10">CN</AvatarFallback>
+                                <AvatarImage src={user.image || ''} alt={user.name || 'User'} />
+                                <AvatarFallback className="rounded-lg bg-white/10">
+                                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{user.name}</span>
+                                <span className="truncate font-medium">{user.name || user.email}</span>
                                 <span className="truncate text-xs">{user.email}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4" />
@@ -70,13 +65,19 @@ export function NavUser({
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg bg-white/10">
-                                    <AvatarImage src={user.avatar} alt={user.name} />
-                                    <AvatarFallback className="rounded-lg bg-white/10">CN</AvatarFallback>
-                                </Avatar>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium text-gray-900 dark:text-white">{user.name}</span>
-                                    <span className="truncate text-xs text-gray-500 dark:text-gray-400">{user.email}</span>
-                                </div>
+                                <AvatarImage src={user.image || ''} alt={user.name || 'User'} />
+                                <AvatarFallback className="rounded-lg bg-white/10">
+                                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                <span className="truncate font-medium text-gray-900 dark:text-white">
+                                    {user.name || user.email}
+                                </span>
+                                <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+                                    {user.email}
+                                </span>
+                            </div>
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-800" />
@@ -93,9 +94,12 @@ export function NavUser({
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-800" />
-                        <DropdownMenuItem className="text-gray-700 dark:text-gray-300 focus:bg-gray-100 dark:focus:bg-gray-800">
+                        <DropdownMenuItem 
+                            className="text-gray-700 dark:text-gray-300 focus:bg-gray-100 dark:focus:bg-gray-800"
+                            onClick={() => router.push('/logout')}
+                        >
                             <LogOut className="mr-2 h-4 w-4" />
-                            Log out
+                            Déconnexion
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

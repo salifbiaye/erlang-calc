@@ -59,14 +59,14 @@ export default function FormulaireParametreCalculate( {calculationTypes, calcula
                             ))}
 
                             <div className="space-y-3">
-                                <Button
-                                    className="w-full bg-blue-600 hover:bg-blue-700 dark:text-white"
-                                    onClick={handleCalculate}
-                                    disabled={!selectedZone}
-                                >
-                                    <currentCalculation.icon className="mr-2 h-4 w-4"/>
-                                    Calculer les résultats
-                                </Button>
+                            <Button
+                                className="w-full bg-blue-600 hover:bg-blue-700 dark:text-white"
+                                onClick={handleCalculate}
+                                disabled={!selectedZone}
+                            >
+                                <currentCalculation.icon className="mr-2 h-4 w-4"/>
+                                Calculer les résultats
+                            </Button>
 
                                 <Button
                                     className="w-full bg-green-600 hover:bg-green-700 dark:text-white"
@@ -77,11 +77,11 @@ export default function FormulaireParametreCalculate( {calculationTypes, calcula
                                     Sauvegarder la simulation
                                 </Button>
 
-                                {!selectedZone && (
-                                    <p className="text-xs text-amber-400 text-center">
-                                        ⚠️ Veuillez sélectionner une zone pour continuer
-                                    </p>
-                                )}
+                            {!selectedZone && (
+                                <p className="text-xs text-amber-400 text-center">
+                                    ⚠️ Veuillez sélectionner une zone pour continuer
+                                </p>
+                            )}
                             </div>
                         </>
                     )}

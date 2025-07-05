@@ -30,7 +30,7 @@ export default function EntreParametreSimulationDetail({simulationData}: {simula
                         <div className="mt-1.5 flex items-center gap-2 text-gray-900 dark:text-white">
                             <Users className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                             <span>{simulationData.parameters.population.toLocaleString()} habitants</span>
-                        </div>
+                </div>
                     </div>
                     <div>
                         <Label className="text-gray-700 dark:text-gray-300">Taux d'appels</Label>

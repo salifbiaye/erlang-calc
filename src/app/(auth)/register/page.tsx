@@ -1,15 +1,49 @@
 "use client";
-import Checkbox from "@/components/form/input/Checkbox";
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import {ChevronLeftIcon, EyeClosedIcon, EyeIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useRegister } from "@/services/auth.service";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "@/schemas/auth.schema";
+import type { RegisterInput } from "@/schemas/auth.schema";
 
 export default function SignUpForm() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
+    const [showPassword, setShowPassword] = React.useState(false);
+    const router = useRouter();
+    const { mutate: register, isPending, isError, error } = useRegister();
+
+    const {
+        register: registerField,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<RegisterInput>({
+        resolver: zodResolver(registerSchema),
+    });
+
+    const onSubmit = (data: RegisterInput) => {
+        register(
+            {
+                email: data.email,
+                password: data.password,
+                name: `${data.firstName} ${data.lastName}`.trim(),
+            },
+            {
+                onSuccess: () => {
+                    router.push("/login?registered=true");
+                },
+            }
+        );
+    };
+
+    const handleSocialLogin = (provider: "google" | "github") => {
+        router.push(`/auth/${provider}`);
+    };
+
     return (
         <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
             <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
@@ -33,7 +67,10 @@ export default function SignUpForm() {
                     </div>
                     <div>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-                            <Button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <Button
+                                onClick={() => handleSocialLogin("google")}
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10"
+                            >
                                 <svg
                                     width="20"
                                     height="20"
@@ -60,7 +97,10 @@ export default function SignUpForm() {
                                 </svg>
                                 S&apos;inscrire avec Google
                             </Button>
-                            <Button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <Button
+                                onClick={() => handleSocialLogin("github")}
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10"
+                            >
                                 <svg
                                     width="21"
                                     className="fill-current"
@@ -84,7 +124,7 @@ export default function SignUpForm() {
                                 </span>
                             </div>
                         </div>
-                        <form>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className="space-y-5">
                                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                     {/* <!-- Prénom --> */}
@@ -93,11 +133,13 @@ export default function SignUpForm() {
                                             Prénom<span className="text-error-500">*</span>
                                         </Label>
                                         <Input
-                                            type="text"
-                                            id="fname"
-                                            name="fname"
+                                            {...registerField("firstName")}
                                             placeholder="Entrez votre prénom"
+                                            error={errors.firstName?.message}
                                         />
+                                        {errors.firstName && (
+                                            <p className="mt-1 text-sm text-red-500">{errors.firstName.message}</p>
+                                        )}
                                     </div>
                                     {/* <!-- Nom --> */}
                                     <div className="sm:col-span-1">
@@ -105,11 +147,13 @@ export default function SignUpForm() {
                                             Nom<span className="text-error-500">*</span>
                                         </Label>
                                         <Input
-                                            type="text"
-                                            id="lname"
-                                            name="lname"
+                                            {...registerField("lastName")}
                                             placeholder="Entrez votre nom"
+                                            error={errors.lastName?.message}
                                         />
+                                        {errors.lastName && (
+                                            <p className="mt-1 text-sm text-red-500">{errors.lastName.message}</p>
+                                        )}
                                     </div>
                                 </div>
                                 {/* <!-- Email --> */}
@@ -118,11 +162,14 @@ export default function SignUpForm() {
                                         Email<span className="text-error-500">*</span>
                                     </Label>
                                     <Input
+                                        {...registerField("email")}
                                         type="email"
-                                        id="email"
-                                        name="email"
                                         placeholder="Entrez votre email"
+                                        error={errors.email?.message}
                                     />
+                                    {errors.email && (
+                                        <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+                                    )}
                                 </div>
                                 {/* <!-- Mot de passe --> */}
                                 <div>
@@ -131,43 +178,46 @@ export default function SignUpForm() {
                                     </Label>
                                     <div className="relative">
                                         <Input
-                                            placeholder="Entrez votre mot de passe"
+                                            {...registerField("password")}
                                             type={showPassword ? "text" : "password"}
+                                            placeholder="Entrez votre mot de passe"
+                                            error={errors.password?.message}
                                         />
                                         <span
                                             onClick={() => setShowPassword(!showPassword)}
                                             className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                                         >
                                             {showPassword ? (
-                                                <EyeIcon  />
+                                                <EyeIcon />
                                             ) : (
-                                                <EyeClosedIcon  />
+                                                <EyeClosedIcon />
                                             )}
                                         </span>
                                     </div>
+                                    {errors.password && (
+                                        <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+                                    )}
                                 </div>
-                                {/* <!-- Checkbox --> */}
-                                <div className="flex items-center gap-3">
-                                    <Checkbox
-                                        className="w-5 h-5"
-                                        checked={isChecked}
-                                        onChange={setIsChecked}
-                                    />
-                                    <p className="inline-block font-normal text-gray-500 dark:text-gray-400">
-                                        En créant un compte, vous acceptez les{" "}
-                                        <span className="text-gray-800 dark:text-white/90">
-                                            Conditions Générales d&apos;Utilisation,
-                                        </span>{" "}
-                                        et notre{" "}
-                                        <span className="text-gray-800 dark:text-white">
-                                            Politique de Confidentialité
-                                        </span>
-                                    </p>
-                                </div>
+
+                                {isError && (
+                                    <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                        <p className="text-red-600 dark:text-red-400 text-center">
+                                            {error instanceof Error
+                                                ? error.message
+                                                : "Une erreur est survenue lors de l'inscription"}
+                                        </p>
+                                    </div>
+                                )}
+
                                 {/* <!-- Bouton --> */}
                                 <div>
-                                    <Button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
-                                        S&apos;inscrire
+                                    <Button
+                                        type="submit"
+                                        variant={"default"}
+                                        disabled={isPending}
+                                        className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg shadow-theme-xs"
+                                    >
+                                        {isPending ? "Inscription en cours..." : "S'inscrire"}
                                     </Button>
                                 </div>
                             </div>
@@ -175,7 +225,7 @@ export default function SignUpForm() {
 
                         <div className="mt-5">
                             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                                Vous avez déjà un compte ?
+                                Vous avez déjà un compte ?{" "}
                                 <Link
                                     href="/login"
                                     className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
