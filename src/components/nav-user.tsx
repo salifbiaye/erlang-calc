@@ -26,13 +26,13 @@ import {
 import { useAuthStore } from "@/store/auth.store"
 
 export function NavUser() {
-    const { user,  isAuthenticated } = useAuthStore()
+    const { user, isAuthenticated } = useAuthStore()
     const router = useRouter()
+    const { isMobile } = useSidebar()
     
     if (!isAuthenticated || !user) {
         return null
     }
-    const { isMobile } = useSidebar()
 
     return (
         <SidebarMenu>
@@ -46,7 +46,15 @@ export function NavUser() {
                             <Avatar className="h-8 w-8 rounded-lg bg-white/10">
                                 <AvatarImage src={user.image || ''} alt={user.name || 'User'} />
                                 <AvatarFallback className="rounded-lg bg-white/10">
-                                    {user.name ? user.name.split(" ")[0].charAt(0).toUpperCase() + user.name.split(" ")[1].charAt(0).toUpperCase() : 'U'}
+                                    {user.name ? 
+                                      (() => {
+                                        const names = user.name.split(" ");
+                                        const firstInitial = names[0]?.charAt(0)?.toUpperCase() || '';
+                                        const secondInitial = names[1]?.charAt(0)?.toUpperCase() || '';
+                                        return firstInitial + (secondInitial || firstInitial);
+                                      })() 
+                                      : user.email?.charAt(0).toUpperCase() || 'U'
+                                    }
                                 </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -67,7 +75,15 @@ export function NavUser() {
                                 <Avatar className="h-8 w-8 rounded-lg bg-white/10">
                                 <AvatarImage src={user.image || ''} alt={user.name || 'User'} />
                                     <AvatarFallback className="rounded-lg bg-white/10">
-                                        {user.name ? user.name.split(" ")[0].charAt(0).toUpperCase() + user.name.split(" ")[1].charAt(0).toUpperCase() : 'U'}
+                                        {user.name ? 
+                                          (() => {
+                                            const names = user.name.split(" ");
+                                            const firstInitial = names[0]?.charAt(0)?.toUpperCase() || '';
+                                            const secondInitial = names[1]?.charAt(0)?.toUpperCase() || '';
+                                            return firstInitial + (secondInitial || firstInitial);
+                                          })() 
+                                          : user.email?.charAt(0).toUpperCase() || 'U'
+                                        }
                                     </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">

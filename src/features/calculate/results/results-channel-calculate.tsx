@@ -17,6 +17,8 @@ interface ResultsCalculateProps {
   error: Error | null;
 }
 
+
+
 export function ResultsChannelCalculate({
   result, 
   chartData, 
@@ -25,6 +27,7 @@ export function ResultsChannelCalculate({
   error 
 }: ResultsCalculateProps) {
   const { data: chartConfig } = useChartData(chartData || undefined);
+
 
   if (isLoading) {
     return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useChartData } from "@/services/calculate.service";
 import { Scatter } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -14,8 +13,6 @@ import {
   Filler,
   ChartOptions,
   ChartData,
-  ScatterDataPoint,
-  BubbleDataPoint
 } from 'chart.js';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
@@ -48,11 +45,8 @@ export function ResultsPopulationCalculate({
   aiAnalysis,
   isLoading,
   error,
-  population,
-  callRate,
-  avgDuration
+
 }: ResultsCalculateProps) {
-  const { data: chartConfig } = useChartData(chartData || undefined);
 
   if (isLoading) {
     return (
@@ -82,8 +76,7 @@ export function ResultsPopulationCalculate({
     );
   }
 
-  // Calcul du trafic total en Erlangs
-  const totalTraffic = (population * callRate * avgDuration) / 60;
+
 
   // Préparation des données pour le graphique
   const data: ChartData<"scatter", {x: number, y: number}[], unknown> = {
@@ -189,7 +182,7 @@ export function ResultsPopulationCalculate({
             <CardTitle>Analyse IA</CardTitle>
           </CardHeader>
           <CardContent className={"dark:bg-gray-900/50"}>
-            
+
             <ReactMarkdown >{aiAnalysis}</ReactMarkdown>
           </CardContent>
         </Card>

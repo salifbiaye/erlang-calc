@@ -4,7 +4,7 @@ import * as React from "react"
 
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
+import { NavFavorites } from "@/components/nav-favorites"
 import { NavUser } from "@/components/nav-user"
 import {
     Sidebar,
@@ -71,11 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         title: "Mes simulations",
                         url: "/simulations",
                     },
-                    {
-                        title: "Partager avec moi",
-                        url: "/simulations/share",
-                        icon: Share2,
-                    },
+
                 ],
             },
             {
@@ -90,10 +86,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {
                         title: "Sécurité",
                         url: "/settings/security",
-                    },
-                    {
-                        title: "Notifications",
-                        url: "/settings/notifications",
                     },
                     {
                         title: "Préférences",
@@ -131,7 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent className={"dark:bg-gray-900/70 bg-brand-950 text-white"}>
                 <NavMain items={data.navMain}/>
-                <NavProjects projects={data.projects}/>
+                <NavFavorites />
             </SidebarContent>
             <SidebarFooter className={"dark:bg-gray-900/70 bg-brand-950 text-white"}>
                 <NavUser />

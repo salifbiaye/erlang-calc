@@ -1,196 +1,216 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSimulations, type Simulation, useToggleFavorite } from "@/features/simulations/use-simulations";
 import HeaderSimulation from "@/features/simulations/header-simulation";
 import FilterSimulation from "@/features/simulations/filter-simulation";
 import ListSimulation from "@/features/simulations/list-simulation";
 import PaginationSimulation from "@/features/simulations/pagination-simulation";
 import LegendSimulation from "@/features/simulations/legend-simulation";
-import TitleSimulation from "@/features/simulations/title-simulation";
-
-
-
-// Fonction pour déterminer la couleur selon le taux de blocage
-const getStatusColor = (blockingRate: number | null, error?: boolean) => {
-    if (error || blockingRate === null) {
-        return "fill-red-500 text-red-500"
-    }
-    if (blockingRate <= 2.0) {
-        return "fill-green-500 text-green-500"
-    }
-    if (blockingRate <= 3.0) {
-        return "fill-yellow-500 text-yellow-500"
-    }
-    return "fill-red-500 text-red-500"
-}
-
-// Fonction pour déterminer le statut textuel
-const getStatusText = (blockingRate: number | null, error?: boolean) => {
-    if (error || blockingRate === null) {
-        return "Erreur"
-    }
-    if (blockingRate <= 2.0) {
-        return "Optimal"
-    }
-    if (blockingRate <= 3.0) {
-        return "Acceptable"
-    }
-    return "À optimiser"
-}
-
-// Fonction pour basculer l'état "starred" d'une simulation
-const toggleStar = (id: string) => {
-    // Cette fonction serait normalement connectée à votre état global ou API
-    console.log(`Toggle star for simulation ${id}`)
-}
 
 export default function SimulationsPage() {
+  const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState<"all" | "favorites">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [starFilter, setStarFilter] = useState<string>("all");
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-    const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 4
-    const [starFilter, setStarFilter] = useState<string>("all")
-    const [statusFilter, setStatusFilter] = useState<string>("all")
-    const simulations = [
-        {
-            id: "1",
-            zone: "Manhattan Centre",
-            simulationName: "Analyse Réseau Principal",
-            blockingRate: 1.8,
-            channels: 45,
-            date: "Calculé il y a 1 minute",
-            user: { name: "PA", initials: "PA" },
-            starred: false,
-        },
-        {
-            id: "2",
-            zone: "Brooklyn Heights",
-            simulationName: "Couverture Suburbaine",
-            blockingRate: 2.5,
-            channels: 32,
-            date: "En cours depuis 5 minutes",
-            user: { name: "KO", initials: "KO" },
-            starred: false,
-        },
-        {
-            id: "3",
-            zone: "Aéroport JFK",
-            simulationName: "Capacité Terminal",
-            blockingRate: 5.2,
-            channels: 78,
-            date: "Calculé il y a 8 minutes",
-            user: { name: "JE", initials: "JE" },
-            starred: true,
-        },
-        {
-            id: "4",
-            zone: "Autoroute I-95",
-            simulationName: "Corridor Routier",
-            blockingRate: 2.3,
-            channels: 38,
-            date: "Calculé il y a 3 minutes",
-            user: { name: "OB", initials: "OB" },
-            starred: false,
-        },
-        {
-            id: "5",
-            zone: "Centre Commercial",
-            simulationName: "Zone Commerciale",
-            blockingRate: 1.5,
-            channels: 28,
-            date: "Calculé il y a 12 jours",
-            user: { name: "JE", initials: "JE" },
-            starred: true,
-        },
-        {
-            id: "6",
-            zone: "Campus Columbia",
-            simulationName: "Réseau Universitaire",
-            blockingRate: null,
-            channels: 0,
-            date: "Échec il y a 2 minutes",
-            user: { name: "JE", initials: "JE" },
-            starred: false,
-            error: true,
-        },
-        {
-            id: "7",
-            zone: "Times Square",
-            simulationName: "Zone Touristique",
-            blockingRate: 3.1,
-            channels: 65,
-            date: "Calculé il y a 30 minutes",
-            user: { name: "PA", initials: "PA" },
-            starred: true,
-        },
-        {
-            id: "8",
-            zone: "Wall Street",
-            simulationName: "District Financier",
-            blockingRate: 1.2,
-            channels: 52,
-            date: "Calculé il y a 1 heure",
-            user: { name: "KO", initials: "KO" },
-            starred: false,
-        },
-    ]
-    const filteredSimulations = simulations.filter((simulation) => {
-        const starMatch =
-            starFilter === "all" ||
-            (starFilter === "starred" && simulation.starred) ||
-            (starFilter === "unstarred" && !simulation.starred)
+  // Récupérer les simulations avec filtrage et pagination
+  const { data: simulationsData, isLoading, isError } = useSimulations({
+    page: currentPage,
+    limit: itemsPerPage,
+    favoritesOnly: activeTab === 'favorites',
+    search: searchTerm
+  });
 
-        const statusMatch =
-            statusFilter === "all" ||
-            (statusFilter === "optimal" &&
-                !simulation.error &&
-                simulation.blockingRate !== null &&
-                simulation.blockingRate <= 2.0) ||
-            (statusFilter === "acceptable" &&
-                !simulation.error &&
-                simulation.blockingRate !== null &&
-                simulation.blockingRate > 2.0 &&
-                simulation.blockingRate <= 3.0) ||
-            (statusFilter === "problematic" &&
-                !simulation.error &&
-                simulation.blockingRate !== null &&
-                simulation.blockingRate > 3.0) ||
-            (statusFilter === "error" && simulation.error)
+  // Mettre à jour les totaux quand les données changent
+  useEffect(() => {
+    if (simulationsData?.pagination) {
+      setTotalItems(simulationsData.pagination.total);
+      setTotalPages(simulationsData.pagination.totalPages);
+      
+      // Si la page actuelle est supérieure au nombre total de pages, on se met sur la dernière page
+      if (currentPage > simulationsData.pagination.totalPages) {
+        setCurrentPage(simulationsData.pagination.totalPages || 1);
+      }
+    }
+  }, [simulationsData, currentPage]);
 
-        return starMatch && statusMatch
-    })
-    const totalPages = Math.ceil(filteredSimulations.length / itemsPerPage)
-    const startIndex = (currentPage - 1) * itemsPerPage
-    const paginatedSimulations = filteredSimulations.slice(startIndex, startIndex + itemsPerPage)
+  // Réinitialiser à la première page quand on change le nombre d'éléments par page
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
 
+  // Transformer les données pour correspondre à l'interface Simulation
+  const formattedSimulations: Simulation[] = simulationsData?.data?.map(sim => ({
+    ...sim,
+    zoneDisplayName: sim.zoneDisplayName || 'Sans zone',
+    formData: sim.formData || {},
+    chartData: sim.chartData || [],
+    aiAnalysis: sim.aiAnalysis || ''
+  })) || [];
 
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo(0, 0);
+  };
 
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+  };
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
+
+  const handleTabChange = (tab: "all" | "favorites") => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
+  const { mutate: toggleFavorite } = useToggleFavorite();
+
+  const handleToggleFavorite = async (simulation: Simulation): Promise<{ success: boolean }> => {
+    return new Promise((resolve) => {
+      // Inverser l'état actuel du favori
+      const newFavoriteStatus = !simulation.isFavorite;
+      
+      // Mettre à jour l'état local immédiatement pour un retour visuel instantané
+      queryClient.setQueryData(
+        ['simulations', { page: currentPage, limit: itemsPerPage, favoritesOnly: activeTab === 'favorites', search: searchTerm }],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          
+          return {
+            ...oldData,
+            data: oldData.data.map((s: Simulation) => 
+              s.id === simulation.id ? { ...s, isFavorite: newFavoriteStatus } : s
+            )
+          };
+        }
+      );
+      
+      // Appeler la mutation pour mettre à jour le favori
+      toggleFavorite(
+        { simulationId: simulation.id, isFavorite: newFavoriteStatus },
+        {
+          onSuccess: () => {
+            resolve({ success: true });
+          },
+          onError: (error) => {
+            console.error('Erreur lors de la mise à jour des favoris:', error);
+            
+            // En cas d'erreur, remettre l'état précédent
+            queryClient.setQueryData(
+              ['simulations', { page: currentPage, limit: itemsPerPage, favoritesOnly: activeTab === 'favorites', search: searchTerm }],
+              (oldData: any) => {
+                if (!oldData) return oldData;
+                
+                return {
+                  ...oldData,
+                  data: oldData.data.map((s: Simulation) => 
+                    s.id === simulation.id ? { ...s, isFavorite: simulation.isFavorite } : s
+                  )
+                };
+              }
+            );
+            
+            resolve({ success: false });
+          }
+        }
+      );
+    });
+  };
+
+  // Filtrer les simulations selon les critères (côté client pour les filtres qui ne sont pas gérés par l'API)
+  const filteredSimulations = formattedSimulations.filter((simulation) => {
+    // Vérifier le filtre des favoris (si non géré par l'API)
+    const matchesStarFilter = 
+      starFilter === "all" || 
+      (starFilter === "starred" && simulation.isFavorite) ||
+      (starFilter === "unstarred" && !simulation.isFavorite);
+    
+    return matchesStarFilter;
+  });
+
+  if (isLoading) {
     return (
-        <div className="min-h-screen bg-white dark:bg-white/5 text-gray-900 dark:text-white">
-            <div className="flex">
-                <div className="flex-1">
-                    <HeaderSimulation/>
-
-                    <div className="flex">
-                        <div className="flex-1 p-6">
-
-                            {/* Titre de la page */}
-                           <TitleSimulation/>
-
-                            {/* Filtres */}
-                           <FilterSimulation filteredSimulations={filteredSimulations} setStarFilter={setStarFilter} setStatusFilter={setStatusFilter} starFilter={starFilter} statusFilter={statusFilter}/>
-
-                            {/* Liste des simulations */}
-                            <ListSimulation paginatedSimulations={paginatedSimulations} toggleStar={toggleStar} getStatusColor={getStatusColor} getStatusText={getStatusText}/>
-
-                            {/* Pagination */}
-                            <PaginationSimulation totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} filteredSimulations={filteredSimulations}/>
-
-                            {/* Légende des couleurs */}
-                            <LegendSimulation/>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div className="flex flex-col dark:bg-white/5 h-full">
+        <HeaderSimulation activeTab={activeTab} onTabChange={handleTabChange} />
+        <div className="flex-1 p-6 overflow-auto">
+          <div className="animate-pulse space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-20 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+            ))}
+          </div>
         </div>
-    )
+      </div>
+    );
+  }
+  
+  if (isError) {
+    return (
+      <div className="flex flex-col dark:bg-white/5 min-h-screen h-full">
+        <HeaderSimulation activeTab={activeTab} onTabChange={handleTabChange} />
+        <div className="flex-1 p-6 overflow-auto">
+          <div className="p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md">
+            Une erreur est survenue lors du chargement des simulations. Veuillez réessayer plus tard.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col dark:bg-white/5 min-h-screen h-full">
+      <HeaderSimulation activeTab={activeTab} onTabChange={handleTabChange} />
+      
+      <div className="flex-1 p-6 overflow-auto">
+        <div className="space-y-6">
+          <FilterSimulation 
+            starFilter={starFilter}
+            onStarFilterChange={setStarFilter}
+            searchTerm={searchTerm}
+            onSearchChange={handleSearch}
+            filteredSimulations={filteredSimulations}
+          />
+          
+          {filteredSimulations.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Aucune simulation trouvée</p>
+            </div>
+          ) : (
+            <>
+              <ListSimulation 
+                simulations={filteredSimulations} 
+                onToggleFavorite={handleToggleFavorite}
+              />
+              
+
+                <div className="mt-6">
+                  <PaginationSimulation 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    itemsPerPage={itemsPerPage}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    onItemsPerPageChange={handleItemsPerPageChange}
+                  />
+                </div>
+
+              
+              <div className="mt-8">
+                <LegendSimulation />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

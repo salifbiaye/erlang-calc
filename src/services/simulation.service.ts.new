@@ -1,0 +1,104 @@
+import axios from 'axios';
+import { useAuthStore } from "@/store/auth.store";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface Simulation {
+  id: string;
+  userId: string;
+  user?: User; // Ajout des informations de l'utilisateur propriétaire
+  zoneLat: number;
+  zoneLon: number;
+  zoneDisplayName: string;
+  type: 'CHANNELS' | 'BLOCKING' | 'TRAFFIC' | 'POPULATION';
+  formData: Record<string, any>;
+  result: number;
+  chartData: any[];
+  aiAnalysis: string;
+  createdAt: string;
+  updatedAt: string;
+  isFavorite: boolean;
+}
+
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+  favoritesOnly?: boolean;
+  search?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export const simulationService = {
+  getSimulations: async (params?: PaginationParams): Promise<PaginatedResponse<Simulation>> => {
+    const token = useAuthStore.getState().token;
+    
+    // Construire l'URL avec les paramètres de requête
+    const queryParams = new URLSearchParams();
+    if (params) {
+      if (params.page) queryParams.append('page', params.page.toString());
+      if (params.limit) queryParams.append('limit', params.limit.toString());
+      if (params.favoritesOnly) queryParams.append('favoritesOnly', 'true');
+      if (params.search) queryParams.append('search', params.search);
+    }
+    
+    const url = `${API_URL}/simulations?${queryParams.toString()}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
+      },
+      credentials: 'include' // Important pour les cookies d'authentification
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Échec du chargement des simulations');
+    }
+
+    const data = await response.json();
+    return {
+      data: data.data,
+      pagination: {
+        total: data.pagination.total,
+        page: data.pagination.page,
+        limit: data.pagination.limit,
+        totalPages: data.pagination.totalPages
+      }
+    };
+  },
+
+  toggleFavorite: async (simulationId: string): Promise<Simulation> => {
+    const response = await axios.post(
+      `${API_URL}/simulations/${simulationId}/favorite`,
+      {},
+      { withCredentials: true }
+    );
+    return response.data;
+  },
+
+  deleteSimulation: async (simulationId: string): Promise<{ success: boolean }> => {
+    await axios.delete(`${API_URL}/simulations/${simulationId}`, {
+      withCredentials: true
+    });
+    return { success: true };
+  }
+};
+
+export default simulationService;

@@ -1,5 +1,6 @@
 // src/services/calculate.service.ts
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/auth.store';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -62,10 +63,12 @@ interface CalculateResponse {
 
 export const calculateService = {
   calculateChannels: async (params: CalculateChannelsParams): Promise<CalculateResponse> => {
+    const token = useAuthStore.getState().token;
     const response = await fetch(`${API_URL}/calculate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
       },
       body: JSON.stringify(params),
     });
@@ -77,11 +80,14 @@ export const calculateService = {
 
     return response.json();
   },
+
   calculateBlocking: async (params: CalculateBlockingParams): Promise<CalculateResponse> => {
+    const token = useAuthStore.getState().token;
     const response = await fetch(`${API_URL}/calculate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
       },
       body: JSON.stringify(params),
     });
@@ -93,11 +99,14 @@ export const calculateService = {
 
     return response.json();
   },
+
   calculateTraffic: async (params: CalculateTrafficParams): Promise<CalculateResponse> => {
+    const token = useAuthStore.getState().token;
     const response = await fetch(`${API_URL}/calculate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
       },
       body: JSON.stringify(params),
     });
@@ -111,10 +120,12 @@ export const calculateService = {
   },
   
   calculatePopulation: async (params: CalculatePopulationParams): Promise<CalculateResponse> => {
+    const token = useAuthStore.getState().token;
     const response = await fetch(`${API_URL}/calculate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
       },
       body: JSON.stringify(params),
     });
@@ -145,7 +156,7 @@ export const useCalculateBlocking = () => {
   });
 
   return mutation;
-}
+};
 
 export const useCalculateTraffic = () => {
   const mutation = useMutation({
@@ -195,14 +206,14 @@ export const useChartData = (data: any[] | undefined) => {
         datasets: [
           {
             label: 'Taux de blocage (%)',
-            data: data.map(item => item.blockingRate),
-            borderColor: 'rgb(99, 102, 241)',
-            backgroundColor: 'rgba(99, 102, 241, 0.5)',
-            tension: 0.4,
+            data: data.map(item => item.blockingRate * 100),
+            borderColor: 'hsl(221.2 83.2% 53.3%)',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            tension: 0.3,
+            fill: true,
           },
         ],
       };
     },
-    enabled: !!data,
   });
 };
