@@ -1,16 +1,23 @@
+
+"use client";
 import GridShape from "@/components/common/GridShape";
 
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import ThemeToggler from "@/components/theme-toggle";
-
+import { useAuthStore } from "@/store/auth.store";
+import { redirect } from "next/navigation";
 
 export default function AuthLayout({
                                        children,
                                    }: {
     children: React.ReactNode;
 }) {
+    const { isAuthenticated } = useAuthStore();
+    if (isAuthenticated) {
+        return redirect("/dashboard");
+    }
     return (
         <div className="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
                 <div className="relative flex lg:flex-row w-full h-screen justify-center flex-col  dark:bg-gray-900 sm:p-0">

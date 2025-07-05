@@ -26,7 +26,7 @@ import {
 import { useAuthStore } from "@/store/auth.store"
 
 export function NavUser() {
-    const { user, logout, isAuthenticated } = useAuthStore()
+    const { user,  isAuthenticated } = useAuthStore()
     const router = useRouter()
     
     if (!isAuthenticated || !user) {
@@ -46,7 +46,7 @@ export function NavUser() {
                             <Avatar className="h-8 w-8 rounded-lg bg-white/10">
                                 <AvatarImage src={user.image || ''} alt={user.name || 'User'} />
                                 <AvatarFallback className="rounded-lg bg-white/10">
-                                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                    {user.name ? user.name.split(" ")[0].charAt(0).toUpperCase() + user.name.split(" ")[1].charAt(0).toUpperCase() : 'U'}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -66,9 +66,9 @@ export function NavUser() {
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg bg-white/10">
                                 <AvatarImage src={user.image || ''} alt={user.name || 'User'} />
-                                <AvatarFallback className="rounded-lg bg-white/10">
-                                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                                </AvatarFallback>
+                                    <AvatarFallback className="rounded-lg bg-white/10">
+                                        {user.name ? user.name.split(" ")[0].charAt(0).toUpperCase() + user.name.split(" ")[1].charAt(0).toUpperCase() : 'U'}
+                                    </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-medium text-gray-900 dark:text-white">

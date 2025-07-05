@@ -27,7 +27,7 @@ import {
     MapPinned, Signal,
 } from "lucide-react"
 import {cn} from "@/lib/utils";
-import {useCurrentUser} from "@/services/auth.service";
+
 
 
 
@@ -36,14 +36,8 @@ import {useCurrentUser} from "@/services/auth.service";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { state } = useSidebar()
     const isCollapsed = state === "collapsed"
-    const user = useCurrentUser()
-    console.log("Current User:", user)
     const data = {
-        user: {
-            name: "salifbiaye",
-            email: "salif@example.com",
-            avatar: "/avatars/salif.jpg",
-        },
+
 
         navMain: [
             {
@@ -140,7 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavProjects projects={data.projects}/>
             </SidebarContent>
             <SidebarFooter className={"dark:bg-gray-900/70 bg-brand-950 text-white"}>
-                <NavUser user={data.user}/>
+                <NavUser />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

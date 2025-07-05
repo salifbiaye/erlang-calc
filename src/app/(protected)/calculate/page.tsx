@@ -1,21 +1,27 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import {useState, useEffect, useCallback} from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calculator, Radio, Zap, TrendingUp, Users, BarChart3, MapPin } from "lucide-react"
-
-import { InteractiveMap } from "@/components/interactive-map"
-import HeaderCalculate from "@/features/calculate/header-calculate";
-import TitleCalculate from "@/features/calculate/title-calculate";
-import ZoneSearchCalculate from "@/features/calculate/zone-search-calculate";
-import FormulaireParametreCalculate from "@/features/calculate/formulaire-parametre-calculate";
-import MapInteractiveCalculate from "@/features/calculate/map-interactive-calculate";
-import ResultsCalculate from "@/features/calculate/results-calculate";
+import { Calculator, Radio, Zap, TrendingUp, Users, } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import HeaderCalculate from "@/features/calculate/header-calculate"
+import TitleCalculate from "@/features/calculate/title-calculate"
+import ZoneSearchCalculate from "@/features/calculate/zone-search-calculate"
+import { FormulaireChannelCalculate } from "@/features/calculate/forms/formulaire-channel-calculate"
+import MapInteractiveCalculate from "@/features/calculate/map-interactive-calculate"
+import { ResultsChannelCalculate } from "@/features/calculate/results/results-channel-calculate"
+import {useCalculateBlocking, useCalculateChannels, useCalculateTraffic, useCalculatePopulation} from "@/services/calculate.service"
+import {FormulaireBlockingCalculate} from "@/features/calculate/forms/formulaire-blocking-calculate";
+import {ResultsBlockingCalculate} from "@/features/calculate/results/results-blocking-calculate";
+import { FormulaireTrafficCalculate } from "@/features/calculate/forms/formulaire-traffic-calculate";
+import { ResultsTrafficCalculate } from "@/features/calculate/results/results-traffic-calculate";
+import { FormulairePopulationCalculate } from "@/features/calculate/forms/formulaire-population-calculate";
+import { ResultsPopulationCalculate } from "@/features/calculate/results/results-population-calculate";
 
 interface ZoneData {
-    display_name: string;
-    lat: number;
-    lon: number;
+    display_name: string
+    lat: number
+    lon: number
 }
 
 const calculationTypes = [
@@ -98,9 +104,27 @@ export default function CalculatePage() {
     const [selectedZone, setSelectedZone] = useState<ZoneData | null>(null)
     const [calculationType, setCalculationType] = useState("")
     const [formData, setFormData] = useState<Record<string, string>>({})
+    
+    // Réinitialiser les données du formulaire lorsque le type de calcul change
+    useEffect(() => {
+        setFormData({})
+        setShowResults(false)
+        setResult(null)
+        setChartData(null)
+        setAiAnalysis("")
+    }, [calculationType])
     const [showResults, setShowResults] = useState(false)
+    
+    // États pour les résultats du calcul
+    const [result, setResult] = useState<number | null>(null)
+    const [chartData, setChartData] = useState<any[] | null>(null)
+    const [aiAnalysis, setAiAnalysis] = useState<string>("")
 
     const currentCalculation = calculationTypes.find((calc) => calc.id === calculationType)
+    const { mutate: calculate, isPending, error, isError } = useCalculateChannels()
+    const { mutate: calculateBlocking, isPending: isBlockingPending, error: blockingError, isError: isBlockingError } = useCalculateBlocking()
+    const { mutate: calculateTraffic, isPending: isTrafficPending, error: trafficError, isError: isTrafficError } = useCalculateTraffic()
+    const { mutate: calculatePopulation, isPending: isPopulationPending, error: populationError, isError: isPopulationError } = useCalculatePopulation()
 
     // Préremplir les champs selon la zone sélectionnée
     useEffect(() => {
@@ -125,61 +149,137 @@ export default function CalculatePage() {
         }
     }, [selectedZone, calculationType, currentCalculation])
 
-    const handleInputChange = (fieldId: string, value: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            [fieldId]: value,
-        }))
-    }
 
-    const handleCalculate = () => {
-        setShowResults(true)
-    }
+    const handleCalculate = useCallback((data: any) => {
+        console.log("Début du calcul avec les données:", data, "et zone sélectionnée:", selectedZone)
+        if (data.calculationType === "channels") {
+            console.log("Calcul des canaux avec les données suivantes:", {
+                ...data,
+                selectedZone: selectedZone || undefined
+            });
 
-    const getResultValue = () => {
-        switch (calculationType) {
-            case "channels":
-                return "42"
-            case "blocking":
-                return "1.8%"
-            case "traffic":
-                return "38.5"
-            case "population":
-                return "35"
-            default:
-                return "--"
+            calculate(
+                {
+                    calculationType: "channels",
+                    traffic_intensity: data.traffic_intensity,
+                    blocking_prob: data.blocking_prob,
+                    selectedZone: selectedZone || undefined
+                },
+                {
+                    onSuccess: (response) => {
+                        setResult(response.result)
+                        setChartData(response.chartData)
+                        setAiAnalysis(response.aiAnalysis)
+                        setShowResults(true)
+                    },
+                    onError: (error) => {
+                        console.error("Erreur lors du calcul:", error)
+                    },
+                    onSettled: () => {
+                        // S'exécute dans tous les cas (succès ou erreur)
+                    }
+                }
+            )
+        } else if (data.calculationType === "blocking") {
+
+            calculateBlocking(
+                {
+                    calculationType: "blocking",
+                    num_channels: parseFloat(data.num_channels || "0"),
+                    traffic_load: parseFloat(data.traffic_load || "0"),
+                    selectedZone: selectedZone || undefined
+                },
+                {
+                    onSuccess: (response) => {
+                        setResult(response.result)
+                        setChartData(response.chartData)
+                        setAiAnalysis(response.aiAnalysis)
+                        setShowResults(true)
+                    },
+                    onError: (error) => {
+                        console.error("Erreur lors du calcul:", error)
+                    },
+                    onSettled: () => {
+                        // S'exécute dans tous les cas (succès ou erreur)
+                    }
+                }
+            )
+
+
+        } else if (data.calculationType === "traffic") {
+            console.log("Calcul du trafic avec les données suivantes:", {
+                ...data,
+                selectedZone: selectedZone || undefined
+            });
+
+            calculateTraffic(
+                {
+                    calculationType: "traffic",
+                    available_channels: Number(data.available_channels),
+                    target_blocking: Number(data.target_blocking),
+                    selectedZone: selectedZone || undefined
+                },
+                {
+                    onSuccess: (response) => {
+                        setResult(response.result);
+                        setChartData(response.chartData);
+                        setAiAnalysis(response.aiAnalysis);
+                        setShowResults(true);
+                    },
+                    onError: (error) => {
+                        console.error("Erreur lors du calcul du trafic:", error);
+                    },
+                    onSettled: () => {
+                        // S'exécute dans tous les cas (succès ou erreur)
+                    }
+                }
+            );
+        } else if (data.calculationType === "population") {
+            console.log("Calcul basé sur la population avec les données suivantes:", {
+                ...data,
+                selectedZone: selectedZone || undefined
+            });
+
+            calculatePopulation(
+                {
+                    calculationType: "population",
+                    population: Number(data.population),
+                    call_rate: Number(data.call_rate),
+                    avg_duration: Number(data.avg_duration),
+                    selectedZone: selectedZone || undefined
+                },
+                {
+                    onSuccess: (response) => {
+                        setResult(response.result);
+                        setChartData(response.chartData);
+                        setAiAnalysis(response.aiAnalysis);
+                        setShowResults(true);
+                    },
+                    onError: (error) => {
+                        console.error("Erreur lors du calcul basé sur la population:", error);
+                    },
+                    onSettled: () => {
+                        // S'exécute dans tous les cas (succès ou erreur)
+                    }
+                }
+            );
+        } else {
+            setShowResults(true)
         }
-    }
+    })
 
-    const getResultUnit = () => {
-        switch (calculationType) {
-            case "channels":
-                return "canaux"
-            case "blocking":
-                return "taux de blocage"
-            case "traffic":
-                return "erlangs"
-            case "population":
-                return "canaux"
-            default:
-                return ""
-        }
-    }
-
-    return (
+        return (
         <div className="min-h-screen bg-white dark:bg-white/5 dark:text-white">
             <div className="flex flex-col">
-
                 {/* En-tête de la page */}
-                <HeaderCalculate/>
+                <HeaderCalculate />
 
                 <div className="flex-1 p-4 md:p-6">
-
                     {/* Titre de la page */}
-                   <TitleCalculate/>
+                    <TitleCalculate />
 
                     {/* Sélection de zone en haut */}
-                    <ZoneSearchCalculate 
+                    <ZoneSearchCalculate
                         initialZone={selectedZone}
                         onZoneChange={setSelectedZone}
                     />
@@ -187,16 +287,117 @@ export default function CalculatePage() {
                     {/* Carte interactive */}
                     <MapInteractiveCalculate selectedZone={selectedZone} />
 
-                    <div className="grid gap-6 lg:grid-cols-2  ">
-
+                    <div className="grid gap-6 lg:grid-cols-1">
                         {/* Formulaire de paramètres */}
-                        <FormulaireParametreCalculate calculationTypes={calculationTypes} calculationType={calculationType} setCalculationType={setCalculationType} currentCalculation={currentCalculation} formData={formData} setFormData={setFormData} handleInputChange={handleInputChange} handleCalculate={handleCalculate} selectedZone={selectedZone} />
+                        <div>
+                            <Card className="dark:bg-slate-800/30 dark:border-slate-700/50">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2 dark:text-white">
+                                        <Calculator className="h-5 w-5" />
+                                        Paramètres de calcul
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-2 mb-4">
+                                        <Label htmlFor="calc-type" className="dark:text-slate-300">
+                                            Type de calcul
+                                        </Label>
+                                        <select
+                                            value={calculationType}
+                                            onChange={(e) => setCalculationType(e.target.value)}
+                                            className="w-full p-2 rounded-md border dark:bg-slate-700/50 dark:border-slate-600 dark:text-white"
+                                        >
+                                            <option value="">Sélectionnez un type de calcul</option>
+                                            {calculationTypes.map((calc) => (
+                                                <option key={calc.id} value={calc.id}>
+                                                    {calc.title}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
 
+                                    {calculationType === "channels" && (
+                                        <FormulaireChannelCalculate
+                                            onCalculate={handleCalculate}
+                                            isLoading={isPending}
+                                            hasSelectedZone={!!selectedZone}
+                                            defaultValues={formData}
+                                        />
+                                    )}
 
+                                    {calculationType === "blocking" && (
+                                        <FormulaireBlockingCalculate
+                                            onCalculate={handleCalculate}
+                                            isLoading={isBlockingPending}
+                                            hasSelectedZone={!!selectedZone}
+                                            defaultValues={formData}
+                                        />
+                                    )}
 
-                        {/* Aperçu des résultats */}
-                        <ResultsCalculate calculationType={calculationType} selectedZone={selectedZone} showResults={showResults} currentCalculation={currentCalculation} getResultValue={getResultValue} getResultUnit={getResultUnit} />
+                                    {calculationType === "traffic" && (
+                                        <FormulaireTrafficCalculate
+                                            onCalculate={handleCalculate}
+                                            isLoading={isTrafficPending}
+                                            hasSelectedZone={!!selectedZone}
+                                            defaultValues={formData}
+                                        />
+                                    )}
 
+                                    {calculationType === "population" && (
+                                        <FormulairePopulationCalculate
+                                            onCalculate={handleCalculate}
+                                            isLoading={isPopulationPending}
+                                            hasSelectedZone={!!selectedZone}
+                                            defaultValues={formData}
+                                        />
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Affichage des résultats */}
+                        {showResults && calculationType === "channels" && (
+                            <ResultsChannelCalculate
+                                result={result}
+                                chartData={chartData}
+                                aiAnalysis={aiAnalysis}
+                                isLoading={isPending}
+                                error={isError ? (error as Error) : null}
+                            />
+                        )}
+
+                        {showResults && calculationType === "blocking" && (
+                            <ResultsBlockingCalculate
+                                result={result}
+                                chartData={chartData}
+                                aiAnalysis={aiAnalysis}
+                                isLoading={isBlockingPending}
+                                error={blockingError}
+                            />
+                        )}
+
+                        {showResults && calculationType === "traffic" && (
+                            <ResultsTrafficCalculate
+                                result={result}
+                                chartData={chartData}
+                                aiAnalysis={aiAnalysis}
+                                isLoading={isTrafficPending}
+                                error={trafficError}
+                            />
+                        )}
+
+                        {showResults && calculationType === "population" && (
+                            <ResultsPopulationCalculate
+                                result={result}
+                                chartData={chartData}
+                                aiAnalysis={aiAnalysis}
+                                isLoading={isPopulationPending}
+                                error={populationError}
+                                population={Number(formData.population) || 0}
+                                callRate={Number(formData.call_rate) || 0}
+                                avgDuration={Number(formData.avg_duration) || 0}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

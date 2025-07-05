@@ -19,6 +19,7 @@ export default function OAuthCallback() {
     if (token && userData) {
       try {
         const user = JSON.parse(decodeURIComponent(userData));
+        console.log('OAuth Callback - Token:', token, 'User:', user)
         // Store in Zustand store
         login(token, user);
         

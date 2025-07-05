@@ -5,20 +5,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { calculateSchema, type FormValues, type CalculateRequest } from "@/schemas/calculate.schema";
+import { calculateChannelSchema, type FormValues, type CalculateChannelRequest } from "@/schemas/calculate-channel.schema";
 
 interface FormulaireParametreCalculateProps {
-  onCalculate: (data: CalculateRequest) => void;
+  onCalculate: (data: CalculateChannelRequest) => void;
   isLoading: boolean;
+  hasSelectedZone: boolean;
   defaultValues?: {
     traffic_intensity?: string | number;
     blocking_prob?: string | number;
   };
 }
 
-export function FormulaireParametreCalculate({ 
+export function FormulaireChannelCalculate({
   onCalculate, 
   isLoading,
+  hasSelectedZone,
   defaultValues = {}
 }: FormulaireParametreCalculateProps) {
   const {
@@ -26,7 +28,7 @@ export function FormulaireParametreCalculate({
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(calculateSchema),
+    resolver: zodResolver(calculateChannelSchema),
     defaultValues: {
       calculationType: 'channels',
       traffic_intensity: defaultValues.traffic_intensity?.toString() || '',
@@ -80,8 +82,9 @@ export function FormulaireParametreCalculate({
       <Button 
         type="submit" 
         className="w-full" 
-        disabled={isLoading}
+        disabled={isLoading || !hasSelectedZone}
         aria-busy={isLoading}
+        title={!hasSelectedZone ? "Veuillez sélectionner une zone sur la carte" : ""}
       >
         {isLoading ? "Calcul en cours..." : "Calculer"}
       </Button>

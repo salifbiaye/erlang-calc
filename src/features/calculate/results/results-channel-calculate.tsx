@@ -1,4 +1,4 @@
-// src/features/calculate/results-calculate.tsx
+// src/features/calculate/results-channel-calculate.tsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,7 @@ interface ResultsCalculateProps {
   error: Error | null;
 }
 
-export function ResultsCalculate({ 
+export function ResultsChannelCalculate({
   result, 
   chartData, 
   aiAnalysis, 

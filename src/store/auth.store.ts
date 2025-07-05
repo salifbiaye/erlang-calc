@@ -30,6 +30,7 @@ export const useAuthStore = create<AuthState>()(
         Cookies.set('auth-token', token, { expires: 7, sameSite: 'strict' });
         set({ token, user, isAuthenticated: true });
       },
+
       logout: () => {
         // Remove the auth token cookie
         Cookies.remove('auth-token');
@@ -39,6 +40,17 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      onRehydrateStorage: () => (state) => {
+        if (typeof window !== 'undefined') {
+          const cookieToken = Cookies.get('auth-token');
+          // Si pas de cookie mais un token dans le store, on nettoie
+          if (!cookieToken && state?.token) {
+            state.token = null;
+            state.user = null;
+            state.isAuthenticated = false;
+          }
+        }
+      }
     }
   )
 ); 

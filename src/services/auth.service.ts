@@ -38,8 +38,9 @@ export const authService = {
     return response.json();
   },
 
+
   register: async (data: RegisterData) => {
-    console.log('Registering user with data:', data)
+
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -133,6 +134,7 @@ export const useLogin = () => {
     },
   });
 };
+
 
 export const useRegister = () => {
   return useMutation({
