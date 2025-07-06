@@ -1,5 +1,5 @@
 import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
-import {BarChart3, Download, TrendingUp, LineChart} from "lucide-react";
+import { Download, LineChart } from "lucide-react";
 import {Button} from "@/components/ui/button";
 
 export default function GraphiqueSimulationDetail() {

@@ -3,7 +3,22 @@ import {BarChart3, CheckCircle,} from "lucide-react";
 import {Label} from "@/components/ui/label";
 
 
-export default function ResultsSimulationDetail({simulationData}: { simulationData: any }) {
+interface SimulationResults {
+  requiredChannels: number;
+  actualBlockingRate: number;
+  efficiency: number;
+  peakTrafficCapacity: number;
+}
+
+interface SimulationData {
+  results: SimulationResults;
+}
+
+interface ResultsSimulationDetailProps {
+  simulationData: SimulationData;
+}
+
+export default function ResultsSimulationDetail({ simulationData }: ResultsSimulationDetailProps) {
 
     return (
         <Card className="bg-white dark:bg-gray-900/70 border dark:border-gray-800">

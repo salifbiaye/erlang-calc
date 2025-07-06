@@ -1,4 +1,4 @@
-import {Calendar, Copy, Download, MapPin, Share2, User} from "lucide-react";
+import { Calendar, Download, MapPin, Share2, User } from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 
