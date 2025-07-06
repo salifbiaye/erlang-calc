@@ -4,10 +4,10 @@ import { useAuthStore } from "@/store/auth.store";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export interface CreateSimulationDto {
-  type: 'CHANNELS' | 'BLOCKING' | 'TRAFFIC' | 'POPULATION';
+  type: 'channels' | 'blocking' | 'traffic' | 'population';
   formData: Record<string, any>;
   result: number;
-  chartData: any[];
+  chartData: Record<string, any>;
   aiAnalysis?: string | null;
   zone?: {
     lat: number;
@@ -22,10 +22,10 @@ export interface Simulation {
   zoneLat: number;
   zoneLon: number;
   zoneDisplayName: string;
-  type: 'CHANNELS' | 'BLOCKING' | 'TRAFFIC' | 'POPULATION';
+  type: 'channels' | 'blocking' | 'traffic' | 'population';
   formData: Record<string, any>;
   result: number;
-  chartData: any[];
+  chartData: Record<string, any>;
   aiAnalysis: string;
   createdAt: string;
   updatedAt: string;
