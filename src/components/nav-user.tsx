@@ -102,11 +102,7 @@ export function NavUser() {
                         <DropdownMenuGroup>
                             <DropdownMenuItem className="text-gray-700 dark:text-gray-300 focus:bg-gray-100 dark:focus:bg-gray-800">
                                 <BadgeCheck className="mr-2 h-4 w-4" />
-                                Account
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-gray-700 dark:text-gray-300 focus:bg-gray-100 dark:focus:bg-gray-800">
-                                <Bell className="mr-2 h-4 w-4" />
-                                Notifications
+                                Compte
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-800" />
