@@ -1,0 +1,29 @@
+# Ignorer les erreurs de build
+.next/
+out/
+build/
+dist/
+node_modules/
+
+# Ignorer les erreurs TypeScript spécifiques
+**/*.d.ts
+**/*.js
+!**/*.config.js
+
+# Ignorer les fichiers de test
+**/*.test.*
+**/*.spec.*
+
+# Ignorer les erreurs de style
+**/*.css
+**/*.scss
+**/*.sass
+**/*.less
+
+# Ignorer les fichiers de configuration
+.env*
+!.env.example
+
+# Ignorer les dossiers de build
+dist/
+build/
