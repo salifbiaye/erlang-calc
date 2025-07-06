@@ -60,7 +60,8 @@ export default function ProfilePage() {
         notify.success('Compte supprimé', {
           description: 'Votre compte a été supprimé avec succès.',
         });
-        router.push('/login');
+        // Rediriger vers /logout pour déconnecter l'utilisateur
+        window.location.href = '/logout';
       },
       onError: (error: Error) => {
         notify.error('Erreur', {
