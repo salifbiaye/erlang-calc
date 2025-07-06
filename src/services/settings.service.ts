@@ -115,7 +115,9 @@ export const settingsService = {
 
   // Supprimer le compte utilisateur
   deleteAccount: async (): Promise<{ success: boolean; message: string }> => {
-    const token = useAuthStore.getState().token;
+    const authStore = useAuthStore.getState();
+    const token = authStore.token;
+    
     if (!token) {
       throw new Error('Non authentifié');
     }
@@ -127,12 +129,30 @@ export const settingsService = {
       },
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors de la suppression du compte');
+    // Le serveur retourne un statut 204 (NO_CONTENT) sans corps de réponse
+    if (response.status === 204) {
+      // Déconnecter l'utilisateur après suppression du compte
+      authStore.logout();
+      return { success: true, message: 'Compte supprimé avec succès' };
     }
 
-    return response.json();
+    // Gérer les erreurs
+    if (!response.ok) {
+      try {
+        const error = await response.json();
+        throw new Error(error.message || 'Erreur lors de la suppression du compte');
+      } catch (e) {
+        throw new Error('Erreur lors de la suppression du compte');
+      }
+    }
+
+    // Cas où la réponse n'est pas 204 mais est considérée comme réussie
+    try {
+      return await response.json();
+    } catch (e) {
+      authStore.logout();
+      return { success: true, message: 'Compte supprimé avec succès' };
+    }
   },
 };
 
@@ -165,7 +185,13 @@ export const useChangePassword = () => {
 
 // Hook pour la suppression du compte
 export const useDeleteAccount = () => {
+  const authStore = useAuthStore();
+  
   return useMutation({
     mutationFn: settingsService.deleteAccount,
+    onSuccess: () => {
+      // S'assurer que l'utilisateur est bien déconnecté
+      authStore.logout();
+    },
   });
 };
