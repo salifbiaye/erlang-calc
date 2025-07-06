@@ -1,4 +1,4 @@
-import axios from 'axios';
+
 import { useAuthStore } from "@/store/auth.store";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
@@ -81,7 +81,7 @@ export const simulationService = {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` })
       },
-      credentials: 'include' // Important pour les cookies d'authentification
+
     });
     console.log(`Fetching simulations from: ${url}`)
     if (!response.ok) {
@@ -109,7 +109,7 @@ export const simulationService = {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` })
       },
-      credentials: 'include'
+
     });
 
     if (!response.ok) {
@@ -128,7 +128,7 @@ export const simulationService = {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` })
       },
-      credentials: 'include'
+
     });
 
     if (!response.ok) {
@@ -147,7 +147,7 @@ export const simulationService = {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` })
       },
-      credentials: 'include' // Important pour les cookies d'authentification
+
     });
 
     if (!response.ok) {
@@ -166,7 +166,7 @@ export const simulationService = {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` })
       },
-      credentials: 'include'
+
     })
     .then(response => {
       if (!response.ok) {
@@ -187,7 +187,6 @@ export const simulationService = {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` })
       },
-      credentials: 'include',
       body: JSON.stringify(data)
     });
 
