@@ -22,7 +22,7 @@ export function SimulationDetail({ simulation }: SimulationDetailProps) {
   const renderResults = () => {
     const commonProps = {
       result: simulation.result,
-      chartData: simulation.chartData,
+      chartData: simulation.chartData.data,
       aiAnalysis: simulation.aiAnalysis || '',
       isLoading,
       error,

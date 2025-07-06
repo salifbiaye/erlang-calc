@@ -91,9 +91,9 @@ export default function SimulationDetailPage() {
       }
 
       setComments(
-        comments.map((comment) =>
-          comment.id === commentId ? { ...comment, replies: [...comment.replies, newReply] } : comment,
-        ),
+          comments.map((comment) =>
+              comment.id === commentId ? { ...comment, replies: [...comment.replies, newReply] } : comment,
+          ),
       )
 
       setReplyText("")
@@ -120,21 +120,21 @@ export default function SimulationDetailPage() {
 
   const handleLike = (commentId: string, replyId?: string) => {
     setComments(
-      comments.map((comment) => {
-        if (comment.id === commentId) {
-          if (replyId) {
-            return {
-              ...comment,
-              replies: comment.replies.map((reply) =>
-                reply.id === replyId ? { ...reply, likes: reply.likes + 1 } : reply,
-              ),
+        comments.map((comment) => {
+          if (comment.id === commentId) {
+            if (replyId) {
+              return {
+                ...comment,
+                replies: comment.replies.map((reply) =>
+                    reply.id === replyId ? { ...reply, likes: reply.likes + 1 } : reply,
+                ),
+              }
+            } else {
+              return { ...comment, likes: comment.likes + 1 }
             }
-          } else {
-            return { ...comment, likes: comment.likes + 1 }
           }
-        }
-        return comment
-      }),
+          return comment
+        }),
     )
   }
 
@@ -154,200 +154,200 @@ export default function SimulationDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-12 w-1/3" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-1/3" />
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-32 w-full" />
+        </div>
     );
   }
 
   if (error) {
     return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Erreur</AlertTitle>
-        <AlertDescription>
-          {error.message || "Une erreur est survenue lors du chargement de la simulation."}
-        </AlertDescription>
-      </Alert>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Erreur</AlertTitle>
+          <AlertDescription>
+            {error.message || "Une erreur est survenue lors du chargement de la simulation."}
+          </AlertDescription>
+        </Alert>
     );
   }
 
   if (!simulation) {
     return (
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Simulation non trouvée</AlertTitle>
-        <AlertDescription>
-          La simulation demandée n'existe pas ou vous n'avez pas les droits pour la consulter.
-        </AlertDescription>
-      </Alert>
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Simulation non trouvée</AlertTitle>
+          <AlertDescription>
+            La simulation demandée n'existe pas ou vous n'avez pas les droits pour la consulter.
+          </AlertDescription>
+        </Alert>
     );
   }
 
   return (
-    <div className="min-h-screen dark:bg-white/5 dark:text-white">
-      <HeaderSimulationDetail simulationName={simulation.zoneDisplayName || 'Détails de la simulation'} />
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Détails de la simulation</h1>
-            <div className="flex items-center space-x-2 mt-1">
-             
+      <div className="min-h-screen dark:bg-white/5 dark:text-white">
+        <HeaderSimulationDetail simulationName={simulation.zoneDisplayName || 'Détails de la simulation'} />
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Détails de la simulation</h1>
+              <div className="flex items-center space-x-2 mt-1">
+
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="dark:bg-gray-900/50  p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">{simulation.zoneDisplayName || 'Sans nom'}</h2>
-          <p className="text-muted-foreground mb-4">
-            {simulation.zoneDisplayName ? 
-              `Localisation: ${simulation.zoneDisplayName} (${simulation.zoneLat?.toFixed(4)}, ${simulation.zoneLon?.toFixed(4)})` : 
-              'Aucune localisation spécifiée'
-            }
-          </p>
-          
-          <div className="grid gap-6 md:grid-cols-1 mt-6">
-            <div className="space-y-4">
-              <h3 className="font-medium">Résultats</h3>
-              <SimulationDetail simulation={simulation} />
+
+          <div className="dark:bg-gray-900/50  p-6 rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4">{simulation.zoneDisplayName || 'Sans nom'}</h2>
+            <p className="text-muted-foreground mb-4">
+              {simulation.zoneDisplayName ?
+                  `Localisation: ${simulation.zoneDisplayName} (${simulation.zoneLat?.toFixed(4)}, ${simulation.zoneLon?.toFixed(4)})` :
+                  'Aucune localisation spécifiée'
+              }
+            </p>
+
+            <div className="grid gap-6 md:grid-cols-1 mt-6">
+              <div className="space-y-4">
+                <h3 className="font-medium">Résultats</h3>
+                <SimulationDetail simulation={simulation} />
+              </div>
+
+
             </div>
-            
 
           </div>
-          
+
+          {/*<div className="dark:bg-gray-900/50  p-6 rounded-lg shadow">*/}
+          {/*  <h2 className="text-xl font-semibold mb-4">Commentaires</h2>*/}
+          {/*  */}
+          {/*  <div className="space-y-4 mb-6">*/}
+          {/*    <div className="flex space-x-3">*/}
+          {/*      <div className="flex-shrink-0">*/}
+          {/*        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">*/}
+          {/*          VO*/}
+          {/*        </div>*/}
+          {/*      </div>*/}
+          {/*      <div className="flex-1 min-w-0">*/}
+          {/*        <div className="relative">*/}
+          {/*          <textarea*/}
+          {/*            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-primary/50 focus:border-primary/50 min-h-[100px]"*/}
+          {/*            placeholder="Ajouter un commentaire..."*/}
+          {/*            value={newComment}*/}
+          {/*            onChange={(e) => setNewComment(e.target.value)}*/}
+          {/*          />*/}
+          {/*          <div className="mt-2 flex justify-end">*/}
+          {/*            <button*/}
+          {/*              onClick={handleAddComment}*/}
+          {/*              disabled={!newComment.trim()}*/}
+          {/*              className={`px-4 py-2 rounded-lg ${newComment.trim() ? 'bg-primary text-white hover:bg-primary/90' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}`}*/}
+          {/*            >*/}
+          {/*              Commenter*/}
+          {/*            </button>*/}
+          {/*          </div>*/}
+          {/*        </div>*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*  */}
+          {/*  <div className="space-y-6">*/}
+          {/*    {comments.map((comment) => (*/}
+          {/*      <div key={comment.id} className="space-y-4">*/}
+          {/*        <div className="flex space-x-3">*/}
+          {/*          <div className="flex-shrink-0">*/}
+          {/*            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">*/}
+          {/*              {comment.initials}*/}
+          {/*            </div>*/}
+          {/*          </div>*/}
+          {/*          <div className="flex-1 min-w-0">*/}
+          {/*            <div className="bg-muted/50 p-4 rounded-lg">*/}
+          {/*              <div className="flex justify-between items-start">*/}
+          {/*                <div>*/}
+          {/*                  <p className="font-medium">{comment.author}</p>*/}
+          {/*                  <p className="text-xs text-muted-foreground">{comment.timestamp}</p>*/}
+          {/*                </div>*/}
+          {/*                <button*/}
+          {/*                  onClick={() => handleLike(comment.id)}*/}
+          {/*                  className="text-muted-foreground hover:text-foreground flex items-center space-x-1"*/}
+          {/*                >*/}
+          {/*                  <span>❤️</span>*/}
+          {/*                  <span className="text-xs">{comment.likes}</span>*/}
+          {/*                </button>*/}
+          {/*              </div>*/}
+          {/*              <p className="mt-2">{comment.content}</p>*/}
+          {/*              */}
+          {/*              <button*/}
+          {/*                onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}*/}
+          {/*                className="text-xs text-muted-foreground hover:text-foreground mt-2"*/}
+          {/*              >*/}
+          {/*                {replyingTo === comment.id ? 'Annuler' : 'Répondre'}*/}
+          {/*              </button>*/}
+          {/*              */}
+          {/*              {replyingTo === comment.id && (*/}
+          {/*                <div className="mt-3 flex space-x-3">*/}
+          {/*                  <div className="flex-shrink-0">*/}
+          {/*                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary">*/}
+          {/*                      VO*/}
+          {/*                    </div>*/}
+          {/*                  </div>*/}
+          {/*                  <div className="flex-1">*/}
+          {/*                    <input*/}
+          {/*                      type="text"*/}
+          {/*                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary/50"*/}
+          {/*                      placeholder="Écrire une réponse..."*/}
+          {/*                      value={replyText}*/}
+          {/*                      onChange={(e) => setReplyText(e.target.value)}*/}
+          {/*                      onKeyDown={(e) => {*/}
+          {/*                        if (e.key === 'Enter' && !e.shiftKey) {*/}
+          {/*                          e.preventDefault();*/}
+          {/*                          handleReply(comment.id);*/}
+          {/*                        }*/}
+          {/*                      }}*/}
+          {/*                    />*/}
+          {/*                  </div>*/}
+          {/*                </div>*/}
+          {/*              )}*/}
+          {/*            </div>*/}
+          {/*            */}
+          {/*            {comment.replies.length > 0 && (*/}
+          {/*              <div className="mt-3 space-y-3 pl-4 border-l-2 border-muted">*/}
+          {/*                {comment.replies.map((reply) => (*/}
+          {/*                  <div key={reply.id} className="flex space-x-3">*/}
+          {/*                    <div className="flex-shrink-0">*/}
+          {/*                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary">*/}
+          {/*                        {reply.initials}*/}
+          {/*                      </div>*/}
+          {/*                    </div>*/}
+          {/*                    <div className="flex-1 min-w-0">*/}
+          {/*                      <div className="bg-muted/30 p-3 rounded-lg">*/}
+          {/*                        <div className="flex justify-between items-start">*/}
+          {/*                          <div>*/}
+          {/*                            <p className="text-sm font-medium">{reply.author}</p>*/}
+          {/*                            <p className="text-xs text-muted-foreground">{reply.timestamp}</p>*/}
+          {/*                          </div>*/}
+          {/*                          <button*/}
+          {/*                            onClick={() => handleLike(comment.id, reply.id)}*/}
+          {/*                            className="text-muted-foreground hover:text-foreground flex items-center space-x-1"*/}
+          {/*                          >*/}
+          {/*                            <span className="text-xs">❤️</span>*/}
+          {/*                            <span className="text-xs">{reply.likes}</span>*/}
+          {/*                          </button>*/}
+          {/*                        </div>*/}
+          {/*                        <p className="mt-1 text-sm">{reply.content}</p>*/}
+          {/*                      </div>*/}
+          {/*                    </div>*/}
+          {/*                  </div>*/}
+          {/*                ))}*/}
+          {/*              </div>*/}
+          {/*            )}*/}
+          {/*          </div>*/}
+          {/*        </div>*/}
+          {/*      </div>*/}
+          {/*    ))}*/}
+          {/*  </div>*/}
+          {/*</div>*/}
         </div>
-        
-        {/*<div className="dark:bg-gray-900/50  p-6 rounded-lg shadow">*/}
-        {/*  <h2 className="text-xl font-semibold mb-4">Commentaires</h2>*/}
-        {/*  */}
-        {/*  <div className="space-y-4 mb-6">*/}
-        {/*    <div className="flex space-x-3">*/}
-        {/*      <div className="flex-shrink-0">*/}
-        {/*        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">*/}
-        {/*          VO*/}
-        {/*        </div>*/}
-        {/*      </div>*/}
-        {/*      <div className="flex-1 min-w-0">*/}
-        {/*        <div className="relative">*/}
-        {/*          <textarea*/}
-        {/*            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-primary/50 focus:border-primary/50 min-h-[100px]"*/}
-        {/*            placeholder="Ajouter un commentaire..."*/}
-        {/*            value={newComment}*/}
-        {/*            onChange={(e) => setNewComment(e.target.value)}*/}
-        {/*          />*/}
-        {/*          <div className="mt-2 flex justify-end">*/}
-        {/*            <button*/}
-        {/*              onClick={handleAddComment}*/}
-        {/*              disabled={!newComment.trim()}*/}
-        {/*              className={`px-4 py-2 rounded-lg ${newComment.trim() ? 'bg-primary text-white hover:bg-primary/90' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}`}*/}
-        {/*            >*/}
-        {/*              Commenter*/}
-        {/*            </button>*/}
-        {/*          </div>*/}
-        {/*        </div>*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*  </div>*/}
-        {/*  */}
-        {/*  <div className="space-y-6">*/}
-        {/*    {comments.map((comment) => (*/}
-        {/*      <div key={comment.id} className="space-y-4">*/}
-        {/*        <div className="flex space-x-3">*/}
-        {/*          <div className="flex-shrink-0">*/}
-        {/*            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">*/}
-        {/*              {comment.initials}*/}
-        {/*            </div>*/}
-        {/*          </div>*/}
-        {/*          <div className="flex-1 min-w-0">*/}
-        {/*            <div className="bg-muted/50 p-4 rounded-lg">*/}
-        {/*              <div className="flex justify-between items-start">*/}
-        {/*                <div>*/}
-        {/*                  <p className="font-medium">{comment.author}</p>*/}
-        {/*                  <p className="text-xs text-muted-foreground">{comment.timestamp}</p>*/}
-        {/*                </div>*/}
-        {/*                <button*/}
-        {/*                  onClick={() => handleLike(comment.id)}*/}
-        {/*                  className="text-muted-foreground hover:text-foreground flex items-center space-x-1"*/}
-        {/*                >*/}
-        {/*                  <span>❤️</span>*/}
-        {/*                  <span className="text-xs">{comment.likes}</span>*/}
-        {/*                </button>*/}
-        {/*              </div>*/}
-        {/*              <p className="mt-2">{comment.content}</p>*/}
-        {/*              */}
-        {/*              <button*/}
-        {/*                onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}*/}
-        {/*                className="text-xs text-muted-foreground hover:text-foreground mt-2"*/}
-        {/*              >*/}
-        {/*                {replyingTo === comment.id ? 'Annuler' : 'Répondre'}*/}
-        {/*              </button>*/}
-        {/*              */}
-        {/*              {replyingTo === comment.id && (*/}
-        {/*                <div className="mt-3 flex space-x-3">*/}
-        {/*                  <div className="flex-shrink-0">*/}
-        {/*                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary">*/}
-        {/*                      VO*/}
-        {/*                    </div>*/}
-        {/*                  </div>*/}
-        {/*                  <div className="flex-1">*/}
-        {/*                    <input*/}
-        {/*                      type="text"*/}
-        {/*                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary/50"*/}
-        {/*                      placeholder="Écrire une réponse..."*/}
-        {/*                      value={replyText}*/}
-        {/*                      onChange={(e) => setReplyText(e.target.value)}*/}
-        {/*                      onKeyDown={(e) => {*/}
-        {/*                        if (e.key === 'Enter' && !e.shiftKey) {*/}
-        {/*                          e.preventDefault();*/}
-        {/*                          handleReply(comment.id);*/}
-        {/*                        }*/}
-        {/*                      }}*/}
-        {/*                    />*/}
-        {/*                  </div>*/}
-        {/*                </div>*/}
-        {/*              )}*/}
-        {/*            </div>*/}
-        {/*            */}
-        {/*            {comment.replies.length > 0 && (*/}
-        {/*              <div className="mt-3 space-y-3 pl-4 border-l-2 border-muted">*/}
-        {/*                {comment.replies.map((reply) => (*/}
-        {/*                  <div key={reply.id} className="flex space-x-3">*/}
-        {/*                    <div className="flex-shrink-0">*/}
-        {/*                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary">*/}
-        {/*                        {reply.initials}*/}
-        {/*                      </div>*/}
-        {/*                    </div>*/}
-        {/*                    <div className="flex-1 min-w-0">*/}
-        {/*                      <div className="bg-muted/30 p-3 rounded-lg">*/}
-        {/*                        <div className="flex justify-between items-start">*/}
-        {/*                          <div>*/}
-        {/*                            <p className="text-sm font-medium">{reply.author}</p>*/}
-        {/*                            <p className="text-xs text-muted-foreground">{reply.timestamp}</p>*/}
-        {/*                          </div>*/}
-        {/*                          <button*/}
-        {/*                            onClick={() => handleLike(comment.id, reply.id)}*/}
-        {/*                            className="text-muted-foreground hover:text-foreground flex items-center space-x-1"*/}
-        {/*                          >*/}
-        {/*                            <span className="text-xs">❤️</span>*/}
-        {/*                            <span className="text-xs">{reply.likes}</span>*/}
-        {/*                          </button>*/}
-        {/*                        </div>*/}
-        {/*                        <p className="mt-1 text-sm">{reply.content}</p>*/}
-        {/*                      </div>*/}
-        {/*                    </div>*/}
-        {/*                  </div>*/}
-        {/*                ))}*/}
-        {/*              </div>*/}
-        {/*            )}*/}
-        {/*          </div>*/}
-        {/*        </div>*/}
-        {/*      </div>*/}
-        {/*    ))}*/}
-        {/*  </div>*/}
-        {/*</div>*/}
       </div>
-    </div>
   );
 }
