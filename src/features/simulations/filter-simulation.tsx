@@ -1,20 +1,15 @@
-import { Filter, Search } from "lucide-react";
+import { Filter} from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 
 interface FilterSimulationProps {
   searchTerm: string;
   onSearchChange: (term: string) => void;
   starFilter: string;
   onStarFilterChange: (value: string) => void;
-  statusFilter: string;
-  onStatusFilterChange: (value: string) => void;
   filteredSimulations: any[];
 }
 
 export default function FilterSimulation({
-  searchTerm,
-  onSearchChange,
   starFilter,
   onStarFilterChange,
   filteredSimulations

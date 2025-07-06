@@ -68,10 +68,6 @@ export default function SimulationsPage() {
     setCurrentPage(1);
   };
 
-  const handleTabChange = (tab: "all" | "favorites") => {
-    setActiveTab(tab);
-    setCurrentPage(1);
-  };
 
   const { mutate: toggleFavorite } = useToggleFavorite();
 
@@ -140,8 +136,8 @@ export default function SimulationsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col dark:bg-white/5 h-full">
-        <HeaderSimulation activeTab={activeTab} onTabChange={handleTabChange} />
+      <div className="flex flex-col min-h-screen dark:bg-white/5 h-full">
+        <HeaderSimulation />
         <div className="flex-1 p-6 overflow-auto">
           <div className="animate-pulse space-y-4">
             {[...Array(5)].map((_, i) => (
@@ -156,7 +152,7 @@ export default function SimulationsPage() {
   if (isError) {
     return (
       <div className="flex flex-col dark:bg-white/5 min-h-screen h-full">
-        <HeaderSimulation activeTab={activeTab} onTabChange={handleTabChange} />
+        <HeaderSimulation  />
         <div className="flex-1 p-6 overflow-auto">
           <div className="p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md">
             Une erreur est survenue lors du chargement des simulations. Veuillez réessayer plus tard.
@@ -168,7 +164,7 @@ export default function SimulationsPage() {
 
   return (
     <div className="flex flex-col dark:bg-white/5 min-h-screen h-full">
-      <HeaderSimulation activeTab={activeTab} onTabChange={handleTabChange} />
+      <HeaderSimulation  />
       
       <div className="flex-1 p-6 overflow-auto">
         <div className="space-y-6">
