@@ -20,6 +20,38 @@ Font.register({
   ],
 });
 
+// Enregistrer une police monospace
+Font.register({
+  family: 'Courier',
+  fonts: [
+    { src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Courier/courier-regular.ttf' },
+    { src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Courier/courier-bold.ttf', fontWeight: 'bold' },
+  ],
+});
+
+// Fonction utilitaire pour formater les dates
+const formatDate = (dateString: string) => {
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+  return new Date(dateString).toLocaleDateString('fr-FR', options);
+};
+
+// Fonction pour obtenir l'unité en fonction du type de simulation
+const getUnitForType = (type: string) => {
+  switch(type) {
+    case 'CHANNELS': return 'canaux';
+    case 'BLOCKING': return '%';
+    case 'TRAFFIC': return 'Erlangs';
+    case 'POPULATION': return 'habitants';
+    default: return '';
+  }
+};
+
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -27,6 +59,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     position: 'relative',
     paddingBottom: 80, // Espace pour le footer
+  },
+  code: {
+    fontFamily: 'Courier',
+    backgroundColor: '#F3F4F6',
+    padding: '2px 4px',
+    borderRadius: 4,
+    fontSize: 10,
   },
   header: {
     marginBottom: 25,
@@ -100,43 +139,62 @@ const styles = StyleSheet.create({
     color: '#111827',
     lineHeight: 1.4,
   },
-  resultCard: {
-    backgroundColor: '#3B82F6',
+  resultContainer: {
+    backgroundColor: '#F8FAFC',
+    padding: 15,
     borderRadius: 8,
-    padding: 16,
-    marginTop: 10,
-  },
-  resultText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3B82F6',
+    marginBottom: 15,
   },
   resultLabel: {
-    color: 'rgba(255, 255, 255, 0.9)',
     fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 5,
+  },
+  resultValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  chartContainer: {
+    marginTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingTop: 15,
+  },
+  chartTitle: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#4B5563',
+    marginBottom: 10,
+  },
+  chartPlaceholder: {
+    height: 200,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    border: '1px dashed #D1D5DB',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  chartPlaceholderText: {
+    color: '#9CA3AF',
+    fontStyle: 'italic',
     textAlign: 'center',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  adviceCard: {
-    backgroundColor: '#ECFDF5',
-    borderLeft: '4px solid #10B981',
-    padding: 12,
-    borderRadius: 4,
-    marginTop: 15,
-  },
-  adviceTitle: {
-    color: '#065F46',
     fontSize: 12,
-    fontWeight: 700,
-    marginBottom: 6,
-    fontFamily: 'Roboto',
   },
-  adviceText: {
-    color: '#065F46',
-    fontSize: 11,
+  analysisText: {
+    fontSize: 8,
+    lineHeight: 1.6,
+    color: '#4B5563',
+    textAlign: 'justify',
+  },
+  noteText: {
+    fontSize: 10,
+    color: '#6B7280',
+    fontStyle: 'italic',
     lineHeight: 1.5,
   },
   footer: {
@@ -150,17 +208,17 @@ const styles = StyleSheet.create({
     borderTop: '1px solid #E5E7EB',
     paddingTop: 10,
   },
+  footerText: {
+    fontSize: 9,
+    color: '#9CA3AF',
+    textAlign: 'center',
+  },
   pageNumber: {
     position: 'absolute',
     bottom: 15,
     right: 40,
     fontSize: 10,
     color: '#9CA3AF',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E5E7EB',
-    marginVertical: 15,
   },
 });
 
@@ -170,8 +228,8 @@ interface SimulationPdfProps {
     name?: string;
     type: 'CHANNELS' | 'BLOCKING' | 'TRAFFIC' | 'POPULATION';
     formData: Record<string, any>;
-    result: number;
-    chartData: any[];
+    result: any; // Plus flexible que number pour gérer différents types de résultats
+    chartData?: any[]; // Rendre optionnel
     aiAnalysis?: string;
     createdAt: string;
     updatedAt: string;
@@ -184,13 +242,29 @@ interface SimulationPdfProps {
   };
 }
 
+// Composant pour afficher une paire clé-valeur
+const InfoRow = ({ label, value, isCode = false }: { label: string; value: React.ReactNode; isCode?: boolean }) => (
+  <View style={styles.row}>
+    <Text style={styles.label}>{label}:</Text>
+    {isCode ? (
+      <Text style={styles.code}>{value}</Text>
+    ) : (
+      <Text style={styles.value}>{value}</Text>
+    )}
+  </View>
+);
+
+// Composant pour afficher une section avec un titre
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>{title}</Text>
+    {children}
+  </View>
+);
+
 const SimulationPdf: React.FC<SimulationPdfProps> = ({ simulation }) => {
-  // Log pour le débogage
-  console.log('SimulationPdf - Données reçues:', simulation);
-  
   // Vérifier si les données nécessaires sont présentes
   if (!simulation) {
-    console.error('Erreur: Aucune donnée de simulation disponible');
     return (
       <Document>
         <Page size="A4" style={styles.page}>
@@ -200,11 +274,20 @@ const SimulationPdf: React.FC<SimulationPdfProps> = ({ simulation }) => {
     );
   }
   
-  // Vérifier si window est défini (nécessaire pour le rendu côté client)
-  if (typeof window === 'undefined') {
-    console.log('Rendu côté serveur détecté, retourne un document vide');
-    return <div>Génération du PDF en cours...</div>;
-  }
+  const unit = getUnitForType(simulation.type);
+  
+  // Formater les clés pour un affichage plus lisible
+  const formatKey = (key: string): string => {
+    // Remplacer les underscores par des espaces et mettre en majuscule la première lettre
+    return key
+      .replace(/_/g, ' ')
+      .replace(/\w\S*/g, (txt) => 
+        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+      );
+  };
+  
+  // Ne plus vérifier window pour permettre le rendu côté serveur
+  // Le composant sera rendu côté client par react-pdf
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -240,134 +323,129 @@ const SimulationPdf: React.FC<SimulationPdfProps> = ({ simulation }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+        {/* En-tête avec logo et informations */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Text style={styles.title}>Rapport d'Analyse</Text>
+            <Text style={styles.title}>
+              {simulation.name || `Simulation ${simulation.type.toLowerCase()}`}
+            </Text>
             <Text style={styles.subtitle}>
-              {getTypeLabel()} • Généré le {new Date().toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
+              Créée le {formatDate(simulation.createdAt)}
+              {simulation.updatedAt !== simulation.createdAt && 
+                ` • Dernière mise à jour: ${formatDate(simulation.updatedAt)}`}
             </Text>
           </View>
           <View style={styles.headerRight}>
-            <Text style={styles.headerIcon}>{getTypeIcon()}</Text>
+            <Text style={styles.headerIcon}>
+              {simulation.type.charAt(0)}
+            </Text>
           </View>
         </View>
 
         {/* Section Informations Générales */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informations Générales</Text>
+        <Section title="Informations Générales">
+          <InfoRow 
+            label="Type de simulation" 
+            value={{
+              'CHANNELS': 'Estimation du nombre de canaux',
+              'BLOCKING': 'Calcul du taux de blocage',
+              'TRAFFIC': 'Analyse de trafic',
+              'POPULATION': 'Estimation de population'
+            }[simulation.type] || simulation.type} 
+          />
           
-          <View style={styles.row}>
-            <Text style={styles.label}>Nom de la simulation:</Text>
-            <Text style={[styles.value, { fontWeight: 'bold' }]}>
-              {simulation.name || simulation.zoneDisplayName || simulation.zone?.display_name || 'Sans nom'}
-            </Text>
-          </View>
+          <InfoRow 
+            label="ID" 
+            value={simulation.id} 
+            isCode
+          />
           
           {simulation.zoneDisplayName && (
-            <View style={styles.row}>
-              <Text style={styles.label}>Localisation:</Text>
-              <Text style={styles.value}>{simulation.zoneDisplayName}</Text>
-            </View>
+            <InfoRow 
+              label="Zone d'étude" 
+              value={simulation.zoneDisplayName} 
+            />
           )}
-          
-          <View style={styles.row}>
-            <Text style={styles.label}>Type d'analyse:</Text>
-            <Text style={styles.value}>
-              {simulation.type === 'CHANNELS' ? 'Calcul du nombre de canaux requis' : 
-               simulation.type === 'BLOCKING' ? 'Calcul du taux de blocage' : 
-               simulation.type === 'TRAFFIC' ? 'Analyse de l\'intensité du trafic' : 
-               'Analyse de la taille de population'}
-            </Text>
-          </View>
-          
-          <View style={styles.row}>
-            <Text style={styles.label}>Identifiant unique:</Text>
-            <Text style={[styles.value, { fontFamily: 'monospace', fontSize: 10 }]}>{simulation.id}</Text>
-          </View>
-          
-          <View style={styles.row}>
-            <Text style={styles.label}>Date de création:</Text>
-            <Text style={styles.value}>{formatDate(simulation.createdAt)}</Text>
-          </View>
-          
-          <View style={styles.row}>
-            <Text style={styles.label}>Dernière mise à jour:</Text>
-            <Text style={styles.value}>{formatDate(simulation.updatedAt)}</Text>
-          </View>
-        </View>
+        </Section>
 
         {/* Section Paramètres */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Paramètres de la Simulation</Text>
-          
-          {simulation.formData && Object.entries(simulation.formData).map(([key, value]) => {
-            // Formater les clés pour un affichage plus lisible
+        <Section title="Paramètres de la Simulation">
+          {Object.entries(simulation.formData || {}).map(([key, value]) => {
+            // Formater la clé pour un affichage plus lisible
             const formatKey = (k: string) => {
               return k
                 .split('_')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ')
-                .replace(/([A-Z])/g, ' $1')
-                .trim();
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
             };
             
             // Formater les valeurs pour un affichage plus lisible
             const formatValue = (v: any) => {
-              if (v === null || v === undefined) return 'Non défini';
+              if (v === null || v === undefined) return 'Non spécifié';
               if (typeof v === 'boolean') return v ? 'Oui' : 'Non';
+              if (Array.isArray(v)) return v.join(', ');
+              if (typeof v === 'object') return JSON.stringify(v);
               return String(v);
             };
             
             return (
-              <View key={key} style={styles.row}>
-                <Text style={styles.label}>{formatKey(key)}:</Text>
-                <Text style={[styles.value, { fontFamily: 'Roboto' }]}>{formatValue(value)}</Text>
-              </View>
+              <InfoRow
+                key={key}
+                label={formatKey(key)}
+                value={formatValue(value)}
+              />
             );
           })}
-        </View>
+        </Section>
 
         {/* Section Résultats */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Résultats de la Simulation</Text>
-          
-          <View style={styles.resultCard}>
-            <Text style={styles.resultLabel}>Résultat</Text>
-            <Text style={styles.resultText}>
-              {typeof simulation.result === 'number' 
-                ? simulation.result.toFixed(2)
-                : simulation.result || 'N/A'}
-            </Text>
-            <Text style={[styles.resultLabel, { marginTop: 8 }]}>
-              {simulation.type === 'CHANNELS' ? 'Canaux requis' : 
-               simulation.type === 'BLOCKING' ? 'Taux de blocage' : 
-               simulation.type === 'TRAFFIC' ? 'Intensité du trafic (Erlang)' : 
-               'Taille de population estimée'}
+        <Section title="Résultats">
+          <View style={[styles.resultContainer, { marginBottom: 10 }]}>
+            <Text style={styles.resultLabel}>Résultat principal:</Text>
+            <Text style={styles.resultValue}>
+              {simulation.result.toLocaleString('fr-FR')} {unit}
             </Text>
           </View>
           
-          {/* Conseils IA */}
-          {simulation.aiAnalysis && (
-            <View style={styles.adviceCard}>
-              <Text style={styles.adviceTitle}>🔍 Analyse et Recommandations</Text>
-              <View style={styles.divider} />
-              <Text style={styles.adviceText}>
-                {simulation.aiAnalysis.split('\n').map((line: string, i: number) => (
-                  <Text key={i}>
-                    {line}
-                    {'\n'}
+          {/* Section Résumé des paramètres */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Résumé des paramètres</Text>
+            {simulation.formData && Object.entries(simulation.formData).map(([key, value]) => {
+              // Ne pas afficher les champs vides ou les données brutes
+              if (value === null || value === undefined || 
+                  key === 'rawData' || key === 'chartData' || 
+                  (typeof value === 'object' && Object.keys(value).length === 0)) {
+                return null;
+              }
+              
+              return (
+                <View key={key} style={styles.row}>
+                  <Text style={styles.label}>{formatKey(key)}:</Text>
+                  <Text style={styles.value}>
+                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                   </Text>
-                ))}
-              </Text>
-            </View>
-          )}
-        </View>
+                </View>
+              );
+            })}
+          </View>
+        </Section>
+
+        {/* Section Analyse IA */}
+        {simulation.aiAnalysis && (
+          <Section title="Analyse IA">
+            <Text >
+              {simulation.aiAnalysis}
+            </Text>
+          </Section>
+        )}
+
+        {/* Notes et commentaires */}
+        <Section title="Notes">
+          <Text style={styles.noteText}>
+            Ce document a été généré automatiquement par le système ErlangCalc.
+            Pour toute question, veuillez vous référer à l'ID de simulation ci-dessus.
+          </Text>
+        </Section>
 
         <View style={styles.footer}>
           <Text>Document généré par Erlang Calculator - {new Date().getFullYear()}</Text>

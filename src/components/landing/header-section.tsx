@@ -7,7 +7,9 @@ import React from "react";
 export default function HeaderSection() {
     return (
         <header
-            className="border-b dark:border-slate-700/50 border-slate-200 dark:bg-slate-800/30 bg-white/80 backdrop-blur-sm">
+            className="relative z-20 border-b-0 dark:border-slate-700/50 border-slate-200 dark:bg-slate-800/30 bg-white/80 backdrop-blur-sm">
+            {/* Dégradé de transition pour le header */}
+            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-100 to-transparent dark:from-slate-800/30 dark:to-transparent pointer-events-none" />
             <div className="container mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

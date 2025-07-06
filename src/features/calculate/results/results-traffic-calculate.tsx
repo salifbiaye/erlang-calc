@@ -23,8 +23,21 @@ export function ResultsTrafficCalculate({
   isLoading,
   error
 }: ResultsCalculateProps) {
-  const { data: chartConfig } = useChartData(chartData || undefined);
-
+  // Préparer les données pour le graphique
+  const chartConfig = {
+    labels: chartData?.map(item => item.traffic.toFixed(2)) || [],
+    datasets: [
+      {
+        label: 'Taux de blocage (%)',
+        data: chartData?.map(item => item.blockingRate) || [],
+        borderColor: 'hsl(221.2 83.2% 53.3%)',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        tension: 0.3,
+        fill: true,
+      },
+    ],
+  };
+  console.log("Chart Data:", chartData, "Chart Config:", chartConfig)
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -78,19 +91,7 @@ export function ResultsTrafficCalculate({
             <div className="h-64">
               <Chart
                 type="line"
-                data={{
-                  labels: chartData.map(item => item.traffic.toFixed(2)),
-                  datasets: [
-                    {
-                      label: 'Taux de blocage (%)',
-                      data: chartData.map(item => item.blockingRate * 100),
-                      borderColor: 'hsl(221.2 83.2% 53.3%)',
-                      backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                      tension: 0.3,
-                      fill: true,
-                    },
-                  ],
-                }}
+                data={chartConfig}
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
@@ -107,7 +108,12 @@ export function ResultsTrafficCalculate({
                         text: 'Taux de blocage (%)'
                       },
                       min: 0,
-                      max: 100
+                      max: 100,
+                      ticks: {
+                        callback: function(value) {
+                          return value + '%';
+                        }
+                      }
                     }
                   },
                   plugins: {
@@ -117,7 +123,11 @@ export function ResultsTrafficCalculate({
                     tooltip: {
                       callbacks: {
                         label: function(context) {
-                          return `Taux de blocage: ${context.parsed.y.toFixed(2)}%`;
+                          return `Taux de blocage: ${(context.parsed.y ).toFixed(2)}%`;
+                        },
+                        title: function(tooltipItems) {
+                          const data = tooltipItems[0];
+                          return `Trafic: ${data.label} Erlangs`;
                         }
                       }
                     }
@@ -130,7 +140,7 @@ export function ResultsTrafficCalculate({
       )}
 
       {aiAnalysis && (
-        <Card className={"dark:bg-gray-900/50"}>
+        <Card className={"dark:bg-gray-900/20 dark:text-white"}>
           <CardHeader>
             <CardTitle>Analyse des résultats</CardTitle>
           </CardHeader>

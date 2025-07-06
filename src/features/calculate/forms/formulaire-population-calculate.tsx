@@ -54,7 +54,7 @@ export function FormulairePopulationCalculate({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <Label htmlFor="population">Population</Label>
+        <Label className={"py-4"}  htmlFor="population">Population</Label>
         <Input
           id="population"
           type="number"
@@ -72,7 +72,7 @@ export function FormulairePopulationCalculate({
       </div>
 
       <div>
-        <Label htmlFor="call_rate">Taux d'appel (appels/personne/heure)</Label>
+        <Label className={"py-4"}  htmlFor="call_rate">Taux d'appel (appels/personne/heure)</Label>
         <Input
           id="call_rate"
           type="number"
@@ -91,7 +91,7 @@ export function FormulairePopulationCalculate({
       </div>
 
       <div>
-        <Label htmlFor="avg_duration">Durée moyenne d'appel (minutes)</Label>
+        <Label className={"py-4"}  htmlFor="avg_duration">Durée moyenne d'appel (minutes)</Label>
         <Input
           id="avg_duration"
           type="number"

@@ -5,11 +5,10 @@ import SearchCommand from "@/features/simulations/search-command";
 import ThemeToggler from "@/components/theme-toggle";
 
 interface HeaderSimulationProps {
-  activeTab: "all" | "favorites";
-  onTabChange: (tab: "all" | "favorites") => void;
+    title?: string;
 }
 
-export default function HeaderSimulation({ activeTab, onTabChange }: HeaderSimulationProps) {
+export default function HeaderSimulation({title = "Mes simulations "}: HeaderSimulationProps) {
   return (
     <header className="flex h-16 shrink-0 dark:bg-gray-900/30 bg-muted items-center gap-4 border-border px-6">
       <SidebarTrigger className="-ml-1" />
@@ -19,7 +18,7 @@ export default function HeaderSimulation({ activeTab, onTabChange }: HeaderSimul
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbPage className="text-foreground">
-                {activeTab === "all" ? "Toutes les simulations" : "Favoris"}
+                {title ? title : "Simulations"}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>

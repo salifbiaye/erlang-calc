@@ -1,10 +1,6 @@
 'use client';
 
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
-import { Simulation } from '@/services/simulation.service';
-import SimulationPdf from './SimulationPdf';
+import PdfGenerator from './PdfGenerator';
 import { notify } from '@/lib/notifications';
 
 interface PdfExportButtonProps {
@@ -14,7 +10,7 @@ interface PdfExportButtonProps {
     type: 'CHANNELS' | 'BLOCKING' | 'TRAFFIC' | 'POPULATION';
     formData: Record<string, any>;
     result: any;
-    chartData: any[];
+    chartData?: any[];
     aiAnalysis?: string;
     createdAt: string;
     updatedAt: string;
@@ -24,46 +20,21 @@ interface PdfExportButtonProps {
 }
 
 export function PdfExportButton({ simulation, simulationName }: PdfExportButtonProps) {
-  const getPdfFileName = () => {
-    const name = simulationName 
-      ? simulationName.toLowerCase().replace(/\s+/g, '-')
-      : 'simulation';
-    return `simulation-${name}-${new Date().toISOString().split('T')[0]}.pdf`;
+  const handleClick = () => {
+    notify.info('Préparation du PDF', {
+      description: 'Le téléchargement va commencer...'
+    });
   };
 
-  console.log('PdfExportButton - Données de simulation:', simulation);
-
   return (
-    <PDFDownloadLink
-      document={
-        <SimulationPdf 
-          simulation={{
-            ...simulation,
-            name: simulationName || simulation.name || 'Simulation',
-            zoneDisplayName: simulation.zoneDisplayName || simulation.formData?.zoneDisplayName || 'Sans localisation',
-          }}
-        />
-      }
-      fileName={getPdfFileName()}
-      onClick={() => {
-        console.log('Début du téléchargement du PDF');
-        notify.info('Préparation du PDF', {
-          description: 'Le téléchargement va commencer...'
-        });
-      }}
-    >
-      {({ loading }) => (
-        <Button disabled={loading}>
-          {loading ? (
-            <span>Génération...</span>
-          ) : (
-            <>
-              <Download className="h-4 w-4 mr-2" />
-              <span>Télécharger PDF</span>
-            </>
-          )}
-        </Button>
-      )}
-    </PDFDownloadLink>
+    <div onClick={handleClick} style={{ cursor: 'pointer' }}>
+      <PdfGenerator 
+        simulation={{
+          ...simulation,
+          name: simulationName || simulation.name,
+          zoneDisplayName: simulation.zoneDisplayName || simulation.formData?.zoneDisplayName,
+        }}
+      />
+    </div>
   );
 }

@@ -52,7 +52,7 @@ export function FormulaireTrafficCalculate({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <Label htmlFor="available_channels">Nombre de canaux disponibles</Label>
+        <Label className={"py-4"}  htmlFor="available_channels">Nombre de canaux disponibles</Label>
         <Input
           id="available_channels"
           type="number"
@@ -70,7 +70,7 @@ export function FormulaireTrafficCalculate({
       </div>
 
       <div>
-        <Label htmlFor="target_blocking">Taux de blocage cible (%)</Label>
+        <Label className={"py-4"}   htmlFor="target_blocking">Taux de blocage cible (%)</Label>
         <Input
           id="target_blocking"
           type="number"

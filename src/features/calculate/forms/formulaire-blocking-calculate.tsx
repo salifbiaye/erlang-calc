@@ -49,8 +49,8 @@ export function FormulaireBlockingCalculate({
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-                <Label htmlFor="num_channels">Nombre de canaux</Label>
+            <div >
+                <Label className={"py-4"} htmlFor="num_channels">Nombre de canaux</Label>
                 <Input
                     id="num_channels"
                     type="number"
@@ -66,7 +66,7 @@ export function FormulaireBlockingCalculate({
             </div>
 
             <div>
-                <Label htmlFor="traffic_load">Traffic erlang</Label>
+                <Label className={"py-4"} htmlFor="traffic_load">Traffic erlang</Label>
                 <Input
                     id="traffic_load"
                     type="number"

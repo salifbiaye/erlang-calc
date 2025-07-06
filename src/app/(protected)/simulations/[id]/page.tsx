@@ -199,7 +199,7 @@ export default function SimulationDetailPage() {
           </div>
         </div>
         
-        <div className="dark:bg-gray-900/50 bg-gray-100/50 p-6 rounded-lg shadow">
+        <div className="dark:bg-gray-900/50  p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">{simulation.zoneDisplayName || 'Sans nom'}</h2>
           <p className="text-muted-foreground mb-4">
             {simulation.zoneDisplayName ? 
@@ -219,7 +219,7 @@ export default function SimulationDetailPage() {
           
         </div>
         
-        {/*<div className="dark:bg-gray-900/50 bg-gray-100/50 p-6 rounded-lg shadow">*/}
+        {/*<div className="dark:bg-gray-900/50  p-6 rounded-lg shadow">*/}
         {/*  <h2 className="text-xl font-semibold mb-4">Commentaires</h2>*/}
         {/*  */}
         {/*  <div className="space-y-4 mb-6">*/}

@@ -71,6 +71,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         title: "Mes simulations",
                         url: "/simulations",
                     },
+                    {
+                        title:  "simulations partagées",
+                        url: "/simulations/shared",
+                        icon: Share2,
+                    }
 
                 ],
             },

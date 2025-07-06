@@ -1,125 +1,198 @@
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Activity, Eye, MoreHorizontal, Plus, Radio, Users} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Badge} from "@/components/ui/badge";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {Clock, BarChart3, Zap, Users} from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { simulationService } from "@/services/simulation.service"
+import Link from "next/link"
+import { Skeleton } from "@/components/ui/skeleton"
 
-interface RecentsDashboardProps {
-    recentSimulations: Array<{
-        id: string
-        name: string
-        type: string
-        zone: string
-        channels: number
-        blocking: number
-        efficiency: number
-        status: string
-        date: string
-    }>
-    getStatusText: (status: string) => string
-    getStatusColor: (status: string) => string
-    getEfficiencyColor: (efficiency: number) => string
+export interface SimulationItem {
+  id: string;
+  title: string;
+  type: 'CHANNELS' | 'BLOCKING' | 'TRAFFIC' | 'POPULATION';
+  date: string;
+  result: string;
+  status: 'completed' | 'pending' | 'failed';
 }
 
-export default function RecentsDashboard({ 
-    recentSimulations,
-    getStatusText,
-    getStatusColor,
-    getEfficiencyColor
-}: RecentsDashboardProps) {
+interface RecentsDashboardProps {
+  className?: string;
+}
+
+export default function RecentsDashboard({ className }: RecentsDashboardProps) {
+  const { data: simulationsData, isLoading, isError } = useQuery({
+    queryKey: ['recent-simulations'],
+    queryFn: () => simulationService.getSimulations({ limit: 5, page: 1 }),
+  });
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  const getSimulationResult = (simulation: any) => {
+    switch (simulation.type) {
+      case 'CHANNELS':
+        return `${simulation.result} canaux`;
+      case 'TRAFFIC':
+        return `${simulation.result} Gbps`;
+      case 'BLOCKING':
+        return `${simulation.result}% blocage`;
+      case 'POPULATION':
+        return `${simulation.result} utilisateurs`;
+      default:
+        return 'N/A';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'failed':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'CHANNELS':
+        return <BarChart3 className="h-4 w-4 text-blue-500" />;
+      case 'TRAFFIC':
+        return <Zap className="h-4 w-4 text-purple-500" />;
+      case 'BLOCKING':
+        return <Zap className="h-4 w-4 text-amber-500" />;
+      case 'POPULATION':
+        return <Users className="h-4 w-4 text-emerald-500" />;
+      default:
+        return <BarChart3 className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  if (isLoading) {
     return (
-        <Card className="border bg-white dark:bg-gray-800">
-            <CardHeader className="flex flex-row items-center justify-between pb-4">
-                <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                    <Activity className="h-5 w-5 text-primary dark:text-primary/80"/>
-                    Simulations récentes
-                </CardTitle>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className="bg-transparent hover:bg-primary/5 dark:hover:bg-primary/10"
-                >
-                    <a href="/simulations">Voir tout</a>
-                </Button>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-3">
-                    {recentSimulations.map((simulation) => (
-                        <div
-                            key={simulation.id}
-                            className="group flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/30 dark:hover:border-primary/20 hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                                    <Radio className="h-6 w-6 text-primary dark:text-primary/80"/>
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <p className="font-semibold text-gray-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary/90">
-                                            {simulation.name}
-                                        </p>
-                                        <Badge variant="secondary" className="text-xs bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary/80">
-                                            {simulation.zone}
-                                        </Badge>
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                        {simulation.type}
-                                    </p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
-                                        <span className="flex items-center gap-1">
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full"/>
-                                            {simulation.channels} canaux
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full"/>
-                                            {simulation.blocking}% blocage
-                                        </span>
-                                        <span className={`flex items-center gap-1 font-medium ${getEfficiencyColor(simulation.efficiency)}`}>
-                                            {simulation.efficiency}% efficacité
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="text-right">
-                                    <Badge className={`${getStatusColor(simulation.status)} border-0`}>
-                                        {getStatusText(simulation.status)}
-                                    </Badge>
-                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                                        {simulation.date}
-                                    </p>
-                                </div>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <MoreHorizontal className="h-4 w-4"/>
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-48">
-                                        <DropdownMenuItem className="flex items-center gap-2">
-                                            <Eye className="h-4 w-4"/>
-                                            Voir les détails
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem className="flex items-center gap-2">
-                                            <Plus className="h-4 w-4"/>
-                                            Dupliquer
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem className="flex items-center gap-2">
-                                            <Users className="h-4 w-4"/>
-                                            Partager
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
-                        </div>
-                    ))}
+      <Card className={className}>
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+              <Clock className="h-5 w-5 text-primary" />
+              Simulations récentes
+            </CardTitle>
+            <Link
+              href="/simulations"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Voir tout
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center gap-4 p-3 rounded-lg">
+              <Skeleton className="h-10 w-10 rounded-lg" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+              <Skeleton className="h-4 w-16" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError || !simulationsData?.data) {
+    return (
+      <Card className={className}>
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+              <Clock className="h-5 w-5 text-primary" />
+              Simulations récentes
+            </CardTitle>
+            <Link
+              href="/simulations"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Voir tout
+            </Link>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            Impossible de charger les simulations récentes
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const simulations = simulationsData.data.map(sim => ({
+    id: sim.id,
+    title: sim.zoneDisplayName || 'Sans zone',
+    type: sim.type,
+    date: sim.createdAt,
+    result: getSimulationResult(sim),
+    status: 'completed',
+  }));
+
+  return (
+    <Card className={className}>
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+            <Clock className="h-5 w-5 text-primary" />
+            Simulations récentes
+          </CardTitle>
+          <Link
+            href="/simulations"
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            Voir tout
+          </Link>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {simulations.length > 0 ? (
+          simulations.map((simulation) => (
+            <Link
+              key={simulation.id}
+              href={`/simulations/${simulation.id}`}
+              className="group flex items-center gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/30 dark:hover:border-primary/20 hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
+            >
+              <div className="h-10 w-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                {getTypeIcon(simulation.type)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-gray-900 dark:text-white truncate">
+                  {simulation.title}
+                </p>
+                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="truncate">{simulation.result}</span>
+                  <span>•</span>
+                  <span>{formatDate(simulation.date)}</span>
                 </div>
-            </CardContent>
-        </Card>
-    )
+              </div>
+              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(simulation.status)}`}>
+                {simulation.status === 'completed' ? 'Terminé' : 
+                 simulation.status === 'pending' ? 'En cours' : 'Échoué'}
+              </span>
+            </Link>
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            Aucune simulation récente
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }

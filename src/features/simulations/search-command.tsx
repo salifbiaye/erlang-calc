@@ -28,13 +28,13 @@ const routes = [
         description: "Gérer mes simulations",
         category: "Navigation",
     },
-    {
-        title: "Simulations partagées",
-        url: "/simulations/shared",
-        icon: Share2,
-        description: "Voir les simulations partagées",
-        category: "Navigation",
-    },
+    // {
+    //     title: "Simulations partagées",
+    //     url: "/simulations/shared",
+    //     icon: Share2,
+    //     description: "Voir les simulations partagées",
+    //     category: "Navigation",
+    // },
     {
         title: "Paramètres",
         url: "/settings",
@@ -81,7 +81,20 @@ export default function SearchCommand() {
         return () => document.removeEventListener("keydown", handleKeyDown)
     }, [])
 
-    const allItems = [...routes, ...quickActions]
+    // Ajouter un préfixe pour éviter les conflits de clés
+interface SearchItem {
+  title: string;
+  url: string;
+  description: string;
+  category: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  __type: 'route' | 'action';
+}
+
+const allItems: SearchItem[] = [
+  ...routes.map(route => ({ ...route, __type: 'route' as const })),
+  ...quickActions.map(action => ({ ...action, __type: 'action' as const }))
+];
 
     return (
         <div className="relative w-full max-w-md">
@@ -90,7 +103,7 @@ export default function SearchCommand() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 dark:text-slate-400" />
                 <input
                     type="text"
-                    placeholder="Search documentation..."
+                    placeholder="Chercher ..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => setOpen(true)}
@@ -177,7 +190,7 @@ export default function SearchCommand() {
                                                 )
                                                 .map((item) => (
                                                     <CommandItem
-                                                        key={item.url}
+                                                        key={`${item.__type}-${item.url}`}
                                                         onSelect={() => {
                                                             router.push(item.url)
                                                             setOpen(false)
@@ -185,7 +198,7 @@ export default function SearchCommand() {
                                                         }}
                                                         className="flex items-center gap-3 px-3 py-2 dark:hover:bg-slate-700/50 cursor-pointer dark:text-white rounded-md mx-2"
                                                     >
-                                                        {"icon" in item ? (
+                                                        {item.icon ? (
                                                             <item.icon className="h-4 w-4 dark:text-slate-400" />
                                                         ) : (
                                                             <div className="w-4 h-4 rounded bg-blue-500/20 flex items-center justify-center">

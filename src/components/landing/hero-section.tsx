@@ -1,12 +1,13 @@
 import {Badge} from "@/components/ui/badge";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
-import {ArrowRight, Play} from "lucide-react";
-import React from "react";
+import {ArrowRight, MapPin, Play} from "lucide-react";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {InteractiveMap} from "@/components/landing/interactive-map";
 
 export default function HeroSection() {
     return (
-        <section className="p-16 grid grid-cols-2 relative overflow-hidden ">
+        <section className="p-16 bg-white dark:bg-gray-900 grid grid-cols-1 lg:grid-cols-2 relative overflow-hidden ">
 
             <div className="text-center lg:text-left space-y-8">
                 <div className="space-y-6">
@@ -43,7 +44,7 @@ export default function HeroSection() {
                     </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <div className="flex flex-col sm:flex-row gap-4 p-4 justify-center lg:justify-start">
                     <Link href="/calculate">
                         <Button
                             size="lg"
@@ -59,8 +60,18 @@ export default function HeroSection() {
 
 
             </div>
-            <div
-                className=" w-full bg-[url('/images/network-map.png')] rounded-lg border-4 border-white bg-cover bg-center p-30 bg-no-repeat  relative">
+            <div className="lg:col-span-1 xl:col-span-1">
+                <Card className="dark:bg-slate-800/30 dark:border-slate-700/50">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 dark:text-white">
+                            <MapPin className="h-5 w-5"/>
+                            Carte de la zone
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <InteractiveMap  className="h-64 md:h-80"/>
+                    </CardContent>
+                </Card>
             </div>
         </section>
     )

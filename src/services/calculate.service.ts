@@ -1,6 +1,7 @@
 // src/services/calculate.service.ts
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth.store';
+import { notify } from '@/lib/notifications';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -64,78 +65,138 @@ interface CalculateResponse {
 export const calculateService = {
   calculateChannels: async (params: CalculateChannelsParams): Promise<CalculateResponse> => {
     const token = useAuthStore.getState().token;
-    const response = await fetch(`${API_URL}/calculate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
-      },
-      body: JSON.stringify(params),
-    });
+    const loadingId = notify.loading('Calcul en cours...');
+    
+    try {
+      const response = await fetch(`${API_URL}/calculate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify(params),
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors du calcul');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Erreur lors du calcul');
+      }
+
+      const result = await response.json();
+      notify.dismiss(loadingId);
+      notify.success('Calcul terminé avec succès', {
+        description: 'Les résultats sont disponibles ci-dessous.'
+      });
+      return result;
+    } catch (error) {
+      notify.dismiss(loadingId);
+      notify.error('Erreur', {
+        description: error instanceof Error ? error.message : 'Une erreur est survenue lors du calcul.'
+      });
+      throw error;
     }
-
-    return response.json();
   },
 
   calculateBlocking: async (params: CalculateBlockingParams): Promise<CalculateResponse> => {
     const token = useAuthStore.getState().token;
-    const response = await fetch(`${API_URL}/calculate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
-      },
-      body: JSON.stringify(params),
-    });
+    const loadingId = notify.loading('Calcul en cours...');
+    
+    try {
+      const response = await fetch(`${API_URL}/calculate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify(params),
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors du calcul');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Erreur lors du calcul');
+      }
+
+      const result = await response.json();
+      notify.dismiss(loadingId);
+      notify.success('Calcul terminé avec succès', {
+        description: 'Les résultats sont disponibles ci-dessous.'
+      });
+      return result;
+    } catch (error) {
+      notify.dismiss(loadingId);
+      notify.error('Erreur', {
+        description: error instanceof Error ? error.message : 'Une erreur est survenue lors du calcul.'
+      });
+      throw error;
     }
-
-    return response.json();
   },
 
   calculateTraffic: async (params: CalculateTrafficParams): Promise<CalculateResponse> => {
     const token = useAuthStore.getState().token;
-    const response = await fetch(`${API_URL}/calculate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
-      },
-      body: JSON.stringify(params),
-    });
+    const loadingId = notify.loading('Calcul du trafic en cours...');
+    
+    try {
+      const response = await fetch(`${API_URL}/calculate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify(params),
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors du calcul du trafic');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Erreur lors du calcul du trafic');
+      }
+
+      const result = await response.json();
+      notify.dismiss(loadingId);
+      notify.success('Calcul du trafic terminé', {
+        description: 'Les résultats sont disponibles ci-dessous.'
+      });
+      return result;
+    } catch (error) {
+      notify.dismiss(loadingId);
+      notify.error('Erreur', {
+        description: error instanceof Error ? error.message : 'Une erreur est survenue lors du calcul du trafic.'
+      });
+      throw error;
     }
-
-    return response.json();
   },
   
   calculatePopulation: async (params: CalculatePopulationParams): Promise<CalculateResponse> => {
     const token = useAuthStore.getState().token;
-    const response = await fetch(`${API_URL}/calculate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
-      },
-      body: JSON.stringify(params),
-    });
+    const loadingId = notify.loading('Calcul basé sur la population en cours...');
+    
+    try {
+      const response = await fetch(`${API_URL}/calculate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify(params),
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors du calcul basé sur la population');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Erreur lors du calcul basé sur la population');
+      }
+
+      const result = await response.json();
+      notify.dismiss(loadingId);
+      notify.success('Calcul terminé', {
+        description: 'Les résultats basés sur la population sont disponibles ci-dessous.'
+      });
+      return result;
+    } catch (error) {
+      notify.dismiss(loadingId);
+      notify.error('Erreur', {
+        description: error instanceof Error ? error.message : 'Une erreur est survenue lors du calcul basé sur la population.'
+      });
+      throw error;
     }
-
-    return response.json();
   }
 };
 

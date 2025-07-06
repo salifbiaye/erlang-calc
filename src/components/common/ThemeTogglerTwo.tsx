@@ -1,13 +1,31 @@
 "use client";
-import { useTheme } from "@/context/ThemeContext";
-import React from "react";
+import { useTheme } from "next-themes";
+import React, { useEffect, useState } from "react";
 
 export default function ThemeTogglerTwo() {
-  const { toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Évite l'hydratation en attendant que le composant soit monté
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="inline-flex size-14 items-center justify-center rounded-full bg-brand-500 text-white transition-colors hover:bg-brand-600" />
+    );
+  }
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <button
       onClick={toggleTheme}
       className="inline-flex size-14 items-center justify-center rounded-full bg-brand-500 text-white transition-colors hover:bg-brand-600"
+      aria-label="Toggle theme"
     >
       <svg
         className="hidden dark:block"

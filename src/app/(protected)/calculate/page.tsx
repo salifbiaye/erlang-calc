@@ -422,12 +422,12 @@ export default function CalculatePage() {
     }, [selectedZone, calculationType, currentCalculation])
 
     return (
-        <div className="min-h-screen bg-white dark:bg-white/5 dark:text-white">
-            <div className="flex flex-col">
+        <div className="min-h-screen  bg-white dark:bg-white/5 dark:text-white">
+            <div className="flex   flex-col">
                 {/* En-tête de la page */}
                 <HeaderCalculate />
 
-                <div className="flex-1 p-4 md:p-6">
+                <div className="flex-1 p-4 md:p-6   ">
                     {/* Titre de la page */}
                     <TitleCalculate />
 

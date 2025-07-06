@@ -47,7 +47,7 @@ export function FormulaireChannelCalculate({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <Label htmlFor="traffic_intensity">Intensité du trafic (Erlangs)</Label>
+        <Label className={"py-4"} htmlFor="traffic_intensity">Intensité du trafic (Erlangs)</Label>
         <Input
           id="traffic_intensity"
           type="number"
@@ -63,7 +63,7 @@ export function FormulaireChannelCalculate({
       </div>
 
       <div>
-        <Label htmlFor="blocking_prob">Probabilité de blocage (%)</Label>
+        <Label className={"py-4"} htmlFor="blocking_prob">Probabilité de blocage (%)</Label>
         <Input
           id="blocking_prob"
           type="number"

@@ -26,7 +26,20 @@ export function ResultsChannelCalculate({
   isLoading, 
   error 
 }: ResultsCalculateProps) {
-  const { data: chartConfig } = useChartData(chartData || undefined);
+  // Préparer les données pour le graphique
+  const chartConfig = {
+    labels: chartData?.map(item => item.channels) || [],
+    datasets: [
+      {
+        label: 'Taux de blocage',
+        data: chartData?.map(item => item.blockingRate) || [],
+        borderColor: 'hsl(221.2 83.2% 53.3%)',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        tension: 0.3,
+        fill: true,
+      },
+    ],
+  };
 
 
   if (isLoading) {
@@ -91,18 +104,40 @@ export function ResultsChannelCalculate({
                             title: {
                               display: true,
                               text: 'Taux de blocage (%)'
+                            },
+                            ticks: {
+                              callback: function(value) {
+                                return (value ).toFixed(2) + '%';
+                              }
                             }
                           },
                           x: {
                             title: {
                               display: true,
                               text: 'Nombre de canaux'
+                            },
+                            ticks: {
+                              stepSize: 1
+                            }
+                          }
+                        },
+                        plugins: {
+                          tooltip: {
+                            callbacks: {
+                              label: function(context) {
+                                return `Taux de blocage: ${(context.parsed.y).toFixed(2)}%`;
+                              },
+                              title: function(tooltipItems) {
+                                const data = tooltipItems[0];
+                                return `${data.label} canaux`;
+                              }
                             }
                           }
                         }
                       }}
                       data={chartConfig}
                       type="line"
+
                   />
                 </div>
             )}
@@ -111,7 +146,7 @@ export function ResultsChannelCalculate({
       </div>
 
       {aiAnalysis && (
-        <Card className={"dark:bg-gray-900/50 bg-primary/10"}>
+        <Card className={"dark:bg-gray-900/20 dark:text-white"}>
           <CardHeader>
             <CardTitle>Analyse IA</CardTitle>
           </CardHeader>

@@ -68,13 +68,6 @@ export function SimulationActions({ simulationId, simulationName, simulation }: 
     setIsDeleteDialogOpen(false);
   };
 
-  // Fonction pour générer le nom du fichier PDF
-  const getPdfFileName = useCallback(() => {
-    const name = simulationName 
-      ? simulationName.toLowerCase().replace(/\s+/g, '-')
-      : 'simulation';
-    return `simulation-${name}-${new Date().toISOString().split('T')[0]}.pdf`;
-  }, [simulationName]);
 
   return (
     <div className="flex items-center gap-2">

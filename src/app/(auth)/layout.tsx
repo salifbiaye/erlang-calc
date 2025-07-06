@@ -1,5 +1,5 @@
 
-"use client";
+
 import GridShape from "@/components/common/GridShape";
 
 import Image from "next/image";
@@ -14,10 +14,7 @@ export default function AuthLayout({
                                    }: {
     children: React.ReactNode;
 }) {
-    const { isAuthenticated } = useAuthStore();
-    if (isAuthenticated) {
-        return redirect("/dashboard");
-    }
+
     return (
         <div className="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
                 <div className="relative flex lg:flex-row w-full h-screen justify-center flex-col  dark:bg-gray-900 sm:p-0">

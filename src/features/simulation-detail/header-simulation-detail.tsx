@@ -9,6 +9,10 @@ interface HeaderSimulationDetailProps {
 }
 
 export default function HeaderSimulationDetail({ simulationName }: HeaderSimulationDetailProps) {
+  const truncate = (text: string, maxLength: number): string => {
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+  };
+
   return (
     <header className="flex h-16 shrink-0 dark:bg-gray-900/30 bg-muted items-center gap-4 border-border px-6">
       <SidebarTrigger className="-ml-1" />
@@ -22,7 +26,7 @@ export default function HeaderSimulationDetail({ simulationName }: HeaderSimulat
               </Link>
             </BreadcrumbItem>
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-foreground">{simulationName}</BreadcrumbPage>
+              <BreadcrumbPage className="text-foreground ">{truncate(simulationName, 90)}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

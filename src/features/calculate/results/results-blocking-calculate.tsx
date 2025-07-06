@@ -2,7 +2,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useChartData } from "@/services/calculate.service";
+
 import { Chart } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -24,7 +24,20 @@ export function ResultsBlockingCalculate({
                                             isLoading,
                                             error
                                         }: ResultsCalculateProps) {
-    const { data: chartConfig } = useChartData(chartData || undefined);
+    // Préparer les données pour le graphique
+    const chartConfig = {
+      labels: chartData?.map(item => item.channels) || [],
+      datasets: [
+        {
+          label: 'Taux de blocage',
+          data: chartData?.map(item => item.blockingRate) || [],
+          borderColor: 'hsl(221.2 83.2% 53.3%)',
+          backgroundColor: 'rgba(99, 102, 241, 0.1)',
+          tension: 0.3,
+          fill: true,
+        },
+      ],
+    };
 
     if (isLoading) {
         return (
@@ -88,14 +101,37 @@ export function ResultsBlockingCalculate({
                                                 title: {
                                                     display: true,
                                                     text: 'Taux de blocage (%)'
+                                                },
+                                                ticks: {
+                                                  callback: function(value: number | string) {
+                                                    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+                                                    return (numValue).toFixed(2) + '%';
+                                                  }
                                                 }
                                             },
                                             x: {
                                                 title: {
                                                     display: true,
                                                     text: 'Nombre de canaux'
+                                                },
+                                                ticks: {
+                                                  stepSize: 1
                                                 }
                                             }
+                                        },
+                                        plugins: {
+                                          tooltip: {
+                                            callbacks: {
+                                              label: function(context) {
+                                                const yValue = typeof context.parsed.y === 'string' ? parseFloat(context.parsed.y) : context.parsed.y;
+                                                return `Taux de blocage: ${(yValue).toFixed(2)}%`;
+                                              },
+                                              title: function(tooltipItems) {
+                                                const data = tooltipItems[0];
+                                                return `${data.label} canaux`;
+                                              }
+                                            }
+                                          }
                                         }
                                     }}
                                     data={chartConfig}
@@ -108,7 +144,7 @@ export function ResultsBlockingCalculate({
             </div>
 
             {aiAnalysis && (
-                <Card className={"dark:bg-gray-900/50 bg-primary/10"}>
+                <Card className={"dark:bg-gray-900/20 dark:text-white "}>
                     <CardHeader>
                         <CardTitle>Analyse IA</CardTitle>
                     </CardHeader>

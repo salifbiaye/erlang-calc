@@ -74,7 +74,7 @@ export function SimulationDetail({ simulation }: SimulationDetailProps) {
         />
       </div>
 
-      <div className="rounded-lg dark:bg-gray-900/20 p-6">
+      <div className=" rounded-none dark:bg-gray-900/20 p-6">
         {renderResults()}
       </div>
     </div>

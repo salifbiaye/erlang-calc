@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { favoriteService } from '@/services/favorite-service';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { simulationService } from '@/services/simulation.service';
 
 type FavoriteItem = {
   id: string;
@@ -8,48 +8,47 @@ type FavoriteItem = {
 };
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const queryKey = ['favorites'];
 
-  const refreshFavorites = useCallback(() => {
-    setFavorites(favoriteService.getFavorites());
-    setIsLoading(false);
-  }, []);
+  // Récupérer les simulations favorites
+  const { data: favorites = [], isLoading } = useQuery<FavoriteItem[]>({
+    queryKey,
+    queryFn: async () => {
+      const response = await simulationService.getSimulations({ favoritesOnly: true });
+      return response.data;
+    },
+  });
 
-  useEffect(() => {
-    refreshFavorites();
-    
-    // Écouter les changements dans le localStorage
-    const handleStorageChange = () => {
-      refreshFavorites();
-    };
+  // Mutation pour basculer l'état favori d'une simulation
+  const { mutate: toggleFavorite } = useMutation({
+    mutationFn: async ({ id, isFavorite }: { id: string; isFavorite: boolean }) => {
+      return simulationService.toggleFavorite(id, !isFavorite);
+    },
+    onSuccess: () => {
+      // Invalider et rafraîchir les données des favoris
+      queryClient.invalidateQueries({ queryKey });
+      // Invalider également la liste complète des simulations si nécessaire
+      queryClient.invalidateQueries({ queryKey: ['simulations'] });
+    },
+  });
 
-    // Écouter à la fois les événements de stockage et nos événements personnalisés
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('favorites-updated', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('favorites-updated', handleStorageChange);
-    };
-  }, [refreshFavorites]);
+  // Vérifier si un élément est dans les favoris
+  const isFavorite = (id: string) => {
+    return favorites.some(fav => fav.id === id);
+  };
 
-  const toggleFavorite = useCallback((item: FavoriteItem) => {
-    if (favoriteService.isFavorite(item.id)) {
-      favoriteService.removeFavorite(item.id);
-    } else {
-      favoriteService.addFavorite(item);
-    }
-    // Pas besoin d'appeler refreshFavorites ici car l'événement déclenchera le rafraîchissement
-  }, []);
+  // Rafraîchir manuellement les favoris
+  const refreshFavorites = () => {
+    return queryClient.invalidateQueries({ queryKey });
+  };
 
   return {
     favorites,
     isLoading,
-    toggleFavorite,
+    toggleFavorite: (item: FavoriteItem) => 
+      toggleFavorite({ id: item.id, isFavorite: isFavorite(item.id) }),
     refreshFavorites,
-    isFavorite: useCallback((itemId: string) => 
-      favoriteService.isFavorite(itemId)
-    , [])
+    isFavorite,
   };
 }
