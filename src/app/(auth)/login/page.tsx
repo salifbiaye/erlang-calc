@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import {ChevronLeftIcon, EyeClosedIcon, EyeIcon, GithubIcon} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,10 +11,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/schemas/auth.schema";
 
-export default function Login() {
+function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
+    const verified = searchParams.get('verified') === 'true';
     const { mutate: login, isPending, isError, error } = useLogin();
 
     const {
@@ -40,6 +41,12 @@ export default function Login() {
 
     return (
         <div className="flex flex-col flex-1 lg:w-1/2 w-full">
+            {verified && (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong className="font-bold">Succès ! </strong>
+                    <span className="block sm:inline">Votre email a été vérifié avec succès. Vous pouvez maintenant vous connecter.</span>
+                </div>
+            )}
             <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
                 <Link
                     href="/"
@@ -225,5 +232,17 @@ export default function Login() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function Login() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        }>
+            <LoginForm />
+        </Suspense>
     );
 }

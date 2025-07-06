@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
 import { useQueryClient } from '@tanstack/react-query';
 import type { AuthState } from '@/store/auth.store';
 
-export default function OAuthCallback() {
+function OAuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -42,9 +42,25 @@ export default function OAuthCallback() {
     <div className="w-full lg:w-1/2 h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-        <h1 className="text-2xl font-semibold mb-2">Authenticating...</h1>
+        <h1 className="text-2xl font-semibold mb-2">Authentification...</h1>
         <p className="text-gray-500 dark:text-gray-400">Please wait while we complete your authentication.</p>
       </div>
     </div>
   );
-} 
+}
+
+export default function OAuthCallback() {
+  return (
+    <Suspense fallback={
+      <div className="w-full lg:w-1/2 h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+          <h1 className="text-2xl font-semibold mb-2">chargement...</h1>
+          <p className="text-gray-500 dark:text-gray-400">authentification...</p>
+        </div>
+      </div>
+    }>
+      <OAuthCallbackContent />
+    </Suspense>
+  );
+}

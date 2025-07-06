@@ -1,28 +1,40 @@
 'use client';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
-async function verifyEmail(token: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-email/${token}`, {
-    method: 'GET',
-  });
-  
-  if (!response.ok) {
-    throw new Error('Verification failed');
-  }
-  
-  return response.json();
+// Composant de chargement
+function LoadingSpinner() {
+  return (
+    <div className="w-full lg:w-1/2 h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+        <h1 className="text-2xl font-semibold mb-2">Verifying Email...</h1>
+        <p className="text-gray-500 dark:text-gray-400">Please wait while we verify your email address.</p>
+      </div>
+    </div>
+  );
 }
 
-export default function VerifyEmail() {
+// Composant principal enveloppé dans Suspense
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['verifyEmail', token],
-    queryFn: () => verifyEmail(token || ''),
+    queryFn: async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-email/${token}`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        throw new Error('Verification failed');
+      }
+
+      return response.json();
+    },
     enabled: !!token,
     retry: false
   });
@@ -37,15 +49,7 @@ export default function VerifyEmail() {
   }, [data, router]);
 
   if (isLoading) {
-    return (
-      <div className="w-full lg:w-1/2 h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-          <h1 className="text-2xl font-semibold mb-2">Verifying Email...</h1>
-          <p className="text-gray-500 dark:text-gray-400">Please wait while we verify your email address.</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (isError) {
@@ -83,4 +87,13 @@ export default function VerifyEmail() {
       </div>
     </div>
   );
-} 
+}
+
+// Composant exporté par défaut avec Suspense
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <VerifyEmailContent />
+    </Suspense>
+  );
+}

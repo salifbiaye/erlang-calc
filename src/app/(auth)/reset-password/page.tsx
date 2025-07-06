@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -21,7 +21,7 @@ async function resetPassword({ token, password }: { token: string; password: str
   return response.json();
 }
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -29,7 +29,7 @@ export default function ResetPassword() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const { mutate, isLoading, isError } = useMutation({
+  const { mutate, isPending, isError } = useMutation({
     mutationFn: resetPassword,
     onSuccess: () => {
       router.push('/login?reset=success');
@@ -128,10 +128,10 @@ export default function ResetPassword() {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isPending}
             className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Resetting...' : 'Reset Password'}
+            {isPending ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
 
@@ -146,4 +146,16 @@ export default function ResetPassword() {
       </div>
     </div>
   );
-} 
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
+  );
+}
