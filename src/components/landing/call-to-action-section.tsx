@@ -14,9 +14,9 @@ export default function CallToActionSection() {
             className="h-screen gap-8 dark:bg-slate-800/20 bg-brand-950 relative w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center ">
             <div
                 className="absolute inset-0 w-full h-full dark:bg-slate-800/20 bg-brand-950 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none"/>
-            { !isMobile &&
+            {/* { !isMobile &&
                 <Boxes/>
-            }
+            } */}
 
             <h1 className={cn("md:text-4xl text-xl text-white relative z-20")}>
                 Prêt à Optimiser Votre Réseau ?
