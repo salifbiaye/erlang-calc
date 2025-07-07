@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { simulationService } from "@/services/simulation.service"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
+import {useIsMobile} from "@/hooks/use-mobile";
 
 export interface SimulationItem {
   id: string;
@@ -23,6 +24,7 @@ export default function RecentsDashboard({ className }: RecentsDashboardProps) {
     queryKey: ['recent-simulations'],
     queryFn: () => simulationService.getSimulations({ limit: 5, page: 1 }),
   });
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -144,6 +146,7 @@ export default function RecentsDashboard({ className }: RecentsDashboardProps) {
     status: 'completed',
   }));
 
+
   return (
     <Card className={className}>
       <CardHeader className="pb-4">
@@ -177,8 +180,9 @@ export default function RecentsDashboard({ className }: RecentsDashboardProps) {
                 </p>
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                   <span className="truncate">{simulation.result}</span>
+
                   <span>•</span>
-                  <span>{formatDate(simulation.date)}</span>
+                  <span className={"truncate"}>{formatDate(simulation.date)}</span>
                 </div>
               </div>
               <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(simulation.status)}`}>

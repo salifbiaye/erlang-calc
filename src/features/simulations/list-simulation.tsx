@@ -3,6 +3,8 @@ import { Simulation, getSimulationTypeInfo } from "./use-simulations";
 import { useAuthStore } from "@/store/auth.store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import {useIsMobile} from "@/hooks/use-mobile";
+import {truncate} from "@/lib/utils";
 
 interface ListSimulationProps {
   simulations: Simulation[];
@@ -47,7 +49,7 @@ export default function ListSimulation({
       isCurrentUser: false
     };
   };
-
+const isMobile = useIsMobile();
   return (
     <div className="space-y-3">
       {simulations.map((simulation) => {
@@ -64,7 +66,9 @@ export default function ListSimulation({
               <div className="flex items-center gap-4 flex-1">
                 <div className="flex items-center gap-3">
                   <Circle className={`w-2 h-2 ${typeInfo.color}`}/>
-                  <span className="text-foreground font-medium">{simulation.zoneDisplayName || 'Sans zone'}</span>
+                  {isMobile ? ( <span
+                      className="text-foreground truncate font-medium">{truncate(simulation.zoneDisplayName || "",3) || 'Sans zone'}</span>): (
+                  <span className="text-foreground truncate font-medium">{simulation.zoneDisplayName || 'Sans zone'}</span>)}
                   <span className="text-muted-foreground">/</span>
                   <span className="text-muted-foreground capitalize">{simulation.type.toLowerCase()}</span>
                   <button

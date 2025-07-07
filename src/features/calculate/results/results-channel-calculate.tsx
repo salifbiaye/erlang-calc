@@ -72,7 +72,7 @@ export function ResultsChannelCalculate({
 
   return (
     <div className="space-y-6">
-      <div className={"grid grid-cols-2 gap-8"}>
+      <div className={"grid grid-cols-1 lg:grid-cols-2 gap-8"}>
         <Card className={"dark:bg-gray-900/50"}>
           <CardHeader>
             <CardTitle>Résultats du calcul</CardTitle>
@@ -81,7 +81,7 @@ export function ResultsChannelCalculate({
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <h3 className="text-lg font-medium">Nombre de canaux nécessaires</h3>
-                <p className="text-4xl font-bold text-brand-600">{result}</p>
+                <p className="text-4xl font-bold text-brand-600 truncate">{result}</p>
               </div>
             </div>
           </CardContent>

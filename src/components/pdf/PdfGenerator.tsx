@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 
 // Import direct du composant
 import PdfDocument from './PdfDocument';
+import {useIsMobile} from "@/hooks/use-mobile";
 
 interface PdfGeneratorProps {
   simulation: {
@@ -42,7 +43,6 @@ const PdfGenerator = ({ simulation, simulationName }: PdfGeneratorProps) => {
   }
 
   const fileName = `simulation-${simulationName || 'sans-nom'}-${new Date(simulation.createdAt).toISOString().split('T')[0]}.pdf`;
-
   return (
     <PDFDownloadLink
       document={<PdfDocument simulation={simulation} />}
@@ -55,7 +55,8 @@ const PdfGenerator = ({ simulation, simulationName }: PdfGeneratorProps) => {
           ) : (
             <>
               <Download className="h-4 w-4 mr-2" />
-              <span>Télécharger PDF</span>
+
+              <span className={"truncate"}>PDF</span>
             </>
           )}
         </Button>

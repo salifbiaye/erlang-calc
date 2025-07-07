@@ -13,7 +13,7 @@ interface ActionsDashboardProps {
 
 export default function ActionsDashboard({ quickActions }: ActionsDashboardProps) {
     return (
-        <Card className="border bg-white dark:bg-gray-900/20">
+        <Card className="border bg-white dark:bg-gray-900/20 ">
             <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                     <Zap className="h-5 w-5 text-primary dark:text-primary/80" />

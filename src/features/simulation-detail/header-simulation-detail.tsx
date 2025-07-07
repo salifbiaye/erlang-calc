@@ -3,16 +3,16 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/co
 import SearchCommand from "@/features/simulations/search-command"
 import ThemeToggler from "@/components/theme-toggle"
 import Link from "next/link"
+import {truncate} from "@/lib/utils";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 interface HeaderSimulationDetailProps {
   simulationName: string
 }
 
 export default function HeaderSimulationDetail({ simulationName }: HeaderSimulationDetailProps) {
-  const truncate = (text: string, maxLength: number): string => {
-    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-  };
 
+const isMobile = useIsMobile();
   return (
     <header className="flex h-16 shrink-0 dark:bg-gray-900/30 bg-muted items-center gap-4 border-border px-6">
       <SidebarTrigger className="-ml-1" />
@@ -26,11 +26,18 @@ export default function HeaderSimulationDetail({ simulationName }: HeaderSimulat
               </Link>
             </BreadcrumbItem>
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-foreground ">{truncate(simulationName, 90)}</BreadcrumbPage>
+              {
+                isMobile ? (
+                    <BreadcrumbPage className="text-foreground truncate ">{truncate(simulationName, 5)}</BreadcrumbPage>
+                ) : (
+                    <BreadcrumbPage className="text-foreground truncate ">{truncate(simulationName, 90)}</BreadcrumbPage>
+                )
+              }
+
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center p-2 gap-2">
           <SearchCommand />
           <ThemeToggler />
         </div>

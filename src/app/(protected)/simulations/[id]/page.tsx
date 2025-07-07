@@ -154,7 +154,7 @@ export default function SimulationDetailPage() {
 
   if (isLoading) {
     return (
-        <div className="space-y-4">
+        <div className=" min-h-screen dark:bg-white/5 space-y-4">
           <Skeleton className="h-12 w-1/3" />
           <Skeleton className="h-64 w-full" />
           <Skeleton className="h-32 w-full" />
@@ -203,7 +203,7 @@ export default function SimulationDetailPage() {
             <h2 className="text-xl font-semibold mb-4">{simulation.zoneDisplayName || 'Sans nom'}</h2>
             <p className="text-muted-foreground mb-4">
               {simulation.zoneDisplayName ?
-                  `Localisation: ${simulation.zoneDisplayName} (${simulation.zoneLat?.toFixed(4)}, ${simulation.zoneLon?.toFixed(4)})` :
+                  `Localisation: (${simulation.zoneLat?.toFixed(4)}, ${simulation.zoneLon?.toFixed(4)})` :
                   'Aucune localisation spécifiée'
               }
             </p>

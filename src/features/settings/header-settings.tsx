@@ -1,11 +1,7 @@
-import { Settings2 } from "lucide-react"
+
 import {SidebarTrigger} from "@/components/ui/sidebar";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList, BreadcrumbPage,
-    BreadcrumbSeparator
+    BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import SearchCommand from "@/features/simulations/search-command";
 import ThemeToggler from "@/components/theme-toggle";
@@ -16,10 +12,10 @@ export default function HeaderSettings() {
             <SidebarTrigger className="-ml-1"/>
 
             <div className="flex-1 flex items-center justify-between">
-                <BreadcrumbPage>
+                <BreadcrumbPage className={"truncate"}>
                     paramètres
                 </BreadcrumbPage>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center p-2 gap-2">
                     <SearchCommand/>
                     <ThemeToggler/>
                 </div>

@@ -72,7 +72,7 @@ export default function DashboardPage() {
                     {/* Statistiques avec design amélioré */}
                     <StatsDashboard />
 
-                    <div className="grid gap-6 lg:grid-cols-1">
+                    <div className="gap-4 space-y-4">
                         {/* Actions rapides */}
                         <ActionsDashboard quickActions={quickActions} />
 

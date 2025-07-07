@@ -170,7 +170,7 @@ export function ResultsPopulationCalculate({
           <CardTitle>Courbe de trafic</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-80 w-full">
+        <div className="h-80 w-40 sm:w-full">
             <Scatter options={options} data={data} />
           </div>
         </CardContent>

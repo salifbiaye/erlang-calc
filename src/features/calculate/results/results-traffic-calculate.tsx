@@ -68,12 +68,12 @@ export function ResultsTrafficCalculate({
 
   return (
     <div className="space-y-6">
-      <Card className={"dark:bg-gray-900/50"}>
+      <Card className={" w-full dark:bg-gray-900/50"}>
         <CardHeader>
           <CardTitle>Résultat du calcul</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-center">
+          <div className="lg:text-3xl font-bold text-center">
             {result.toFixed(2)} <span className="text-lg font-normal">Erlangs</span>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-2">
@@ -87,8 +87,8 @@ export function ResultsTrafficCalculate({
           <CardHeader>
             <CardTitle>Courbe de trafic</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-64">
+          <CardContent className={"w-full"}>
+            <div className="h-64 w-40 sm:w-full">
               <Chart
                 type="line"
                 data={chartConfig}

@@ -13,11 +13,11 @@ export default  function HeaderCalculate() {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                            <BreadcrumbPage className="text-foreground">Calculer</BreadcrumbPage>
+                            <BreadcrumbPage className="text-foreground truncate">Calculer</BreadcrumbPage>
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center p-2 gap-2">
                     <SearchCommand/>
                     <ThemeToggler/>
                 </div>

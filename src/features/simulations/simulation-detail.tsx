@@ -53,7 +53,7 @@ export function SimulationDetail({ simulation }: SimulationDetailProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -64,7 +64,7 @@ export function SimulationDetail({ simulation }: SimulationDetailProps) {
             <ArrowLeft className="h-4 w-4" />
             <span className="sr-only">Retour</span>
           </Button>
-          <h2 className="text-xl font-semibold">Résultats de la simulation</h2>
+          <h2 className="lg:text-xl truncate font-semibold">Résultats de la simulation</h2>
         </div>
         
         <SimulationActions 

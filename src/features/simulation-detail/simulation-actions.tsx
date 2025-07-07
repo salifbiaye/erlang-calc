@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useState } from 'react';
+import {useIsMobile} from "@/hooks/use-mobile";
 
 interface SimulationActionsProps {
   simulationId: string;
@@ -67,7 +68,7 @@ export function SimulationActions({ simulationId, simulationName, simulation }: 
     deleteMutation.mutate();
     setIsDeleteDialogOpen(false);
   };
-
+const isMobile = useIsMobile();
 
   return (
     <div className="flex items-center gap-2">
@@ -119,7 +120,14 @@ export function SimulationActions({ simulationId, simulationName, simulation }: 
         ) : (
           <>
             <Trash2 className="h-4 w-4" />
-            <span>Supprimer</span>
+            {
+                isMobile ? (
+                    <span className="">Sup...</span>
+                ) : (
+                    <span className="sr-only">Supprimer</span>
+                )
+            }
+
           </>
         )}
       </Button>
