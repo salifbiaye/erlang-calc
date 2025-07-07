@@ -6,8 +6,41 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "electron": "electron main.js",
+    "dist": "electron-builder",
+    "export": "next export"
   },
+  "build": {
+    "appId": "com.tonapp.erlangcalc",
+    "productName": "Erlang-Calc",
+    "files": [
+      "main.js",
+      "package.json",
+      "public/**/*",
+      ".next/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "public/images/logo"
+    },
+    "win": {
+      "icon": "public/images/logo/logo-icon.ico"
+    },
+    "extraResources": [
+      {
+        "from": ".next",
+        "to": ".next"
+      },
+      {
+        "from": "node_modules",
+        "to": "node_modules"
+      }
+    ]
+  },
+  "main": "main.js",
+  "author": "Salif Biaye",
+  "description": "Erlang-Calc est une application Electron qui permet de calculer le nombre de canaux nécessaires pour une simulation de trafic.",
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -67,6 +100,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
     "tailwindcss": "^4",

@@ -1,3 +1,5 @@
+"use client";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientProviders from "@/components/client-providers";
@@ -12,11 +14,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { useElectronLogoutSync } from "@/hooks/useElectronLogoutSync";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useElectronLogoutSync();
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
