@@ -5,6 +5,7 @@ import { simulationService } from "@/services/simulation.service"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
 import {useIsMobile} from "@/hooks/use-mobile";
+import {truncate} from "@/lib/utils";
 
 export interface SimulationItem {
   id: string;
@@ -176,7 +177,7 @@ export default function RecentsDashboard({ className }: RecentsDashboardProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-gray-900 dark:text-white truncate">
-                  {simulation.title}
+                {truncate(simulation.title || "",20)}
                 </p>
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                   <span className="truncate">{simulation.result}</span>
