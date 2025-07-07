@@ -68,7 +68,7 @@ const isMobile = useIsMobile();
                   <Circle className={`w-2 h-2 ${typeInfo.color}`}/>
                   {isMobile ? ( <span
                       className="text-foreground truncate font-medium">{truncate(simulation.zoneDisplayName || "",3) || 'Sans zone'}</span>): (
-                  <span className="text-foreground truncate font-medium">{simulation.zoneDisplayName || 'Sans zone'}</span>)}
+                  <span className="text-foreground truncate font-medium">{truncate(simulation.zoneDisplayName || "",20) || 'Sans zone'}</span>)}
                   <span className="text-muted-foreground">/</span>
                   <span className="text-muted-foreground capitalize">{simulation.type.toLowerCase()}</span>
                   <button

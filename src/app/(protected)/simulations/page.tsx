@@ -136,7 +136,7 @@ export default function SimulationsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col min-h-screen dark:bg-white/5 h-full">
+      <div className="flex flex-col w-full min-h-screen dark:bg-white/5 h-full">
         <HeaderSimulation />
         <div className="flex-1 p-6 overflow-auto">
           <div className="animate-pulse space-y-4">
