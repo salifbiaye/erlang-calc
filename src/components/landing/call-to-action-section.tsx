@@ -4,15 +4,20 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {ArrowRight} from "lucide-react";
 import React from "react";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 export default function CallToActionSection() {
+    const isMobile = useIsMobile();
+
     return (
         <div
             className="h-screen gap-8 dark:bg-slate-800/20 bg-brand-950 relative w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center ">
             <div
                 className="absolute inset-0 w-full h-full dark:bg-slate-800/20 bg-brand-950 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none"/>
+            { !isMobile &&
+                <Boxes/>
+            }
 
-            <Boxes/>
             <h1 className={cn("md:text-4xl text-xl text-white relative z-20")}>
                 Prêt à Optimiser Votre Réseau ?
             </h1>

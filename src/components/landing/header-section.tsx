@@ -9,16 +9,16 @@ export default function HeaderSection() {
         <header
             className="relative z-20 border-b-0 dark:border-slate-700/50 border-slate-200 dark:bg-slate-800/30 bg-white/80 backdrop-blur-sm">
             {/* Dégradé de transition pour le header */}
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-100 to-transparent dark:from-slate-800/30 dark:to-transparent pointer-events-none" />
+
             <div className="container mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
                             <Signal className="h-4 w-4 text-white"/>
                         </div>
-                        <span className="text-xl font-bold dark:text-white text-slate-800">Erlang Calc</span>
+                        <span className=" text-xs md:text-lg lg:text-xl font-bold dark:text-white text-slate-800">Erlang Calc</span>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center lg:gap-4">
                         <ThemeToggler/>
                         <Link href="/register">
                             <Button variant="ghost"
