@@ -189,7 +189,7 @@ export default function SimulationDetailPage() {
   return (
       <div className="min-h-screen dark:bg-white/5 dark:text-white">
         <HeaderSimulationDetail simulationName={simulation.zoneDisplayName || 'Détails de la simulation'} />
-        <div className="p-6 space-y-6">
+        <div className="p-15 space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">Détails de la simulation</h1>

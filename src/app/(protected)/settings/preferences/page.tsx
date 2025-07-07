@@ -75,7 +75,7 @@ export default function PreferencesPage() {
     return (
         <div className="min-h-screen bg-white dark:bg-white/5">
             <HeaderSettings />
-            <div className="flex-1 space-y-6 p-4 sm:p-6  w-full">
+            <div className="flex-1 space-y-6 p-4 sm:p-15  w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/40">
                     <div className="flex items-center gap-2">
                         <Settings className="h-5 w-5 text-primary" />

@@ -6,7 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <main className={"w-full h-full dark:bg-gray-900  "}>
+            <main className={"w-full  h-full dark:bg-gray-900  "}>
                     {children}
             </main>
         </SidebarProvider>

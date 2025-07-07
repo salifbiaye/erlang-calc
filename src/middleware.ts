@@ -2,11 +2,13 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-const publicRoutes = ["/"]
-const authRoutes = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-email", "/oauth-callback"]
+const publicRoutes: string[] = ["/","/login"]
+const authRoutes = [ "/register", "/forgot-password", "/reset-password", "/verify-email", "/oauth-callback"]
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
+
+    
     const origin = request.nextUrl.origin
     const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))
     const isAuthRoute = authRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))

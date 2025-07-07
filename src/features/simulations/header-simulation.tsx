@@ -25,7 +25,7 @@ export default function HeaderSimulation({title = "Mes simulations "}: HeaderSim
         </Breadcrumb>
         <div className="flex items-center p-2 gap-2">
           <SearchCommand />
-          <ThemeToggler />
+
         </div>
       </div>
     </header>

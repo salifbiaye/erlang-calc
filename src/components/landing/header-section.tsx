@@ -19,7 +19,7 @@ export default function HeaderSection() {
                         <span className=" text-xs md:text-lg lg:text-xl font-bold dark:text-white text-slate-800">Erlang Calc</span>
                     </div>
                     <div className="flex items-center lg:gap-4">
-                        <ThemeToggler/>
+
                         <Link href="/register">
                             <Button variant="ghost"
                                     className="dark:text-slate-300 text-slate-600 hover:text-slate-900 dark:hover:text-white">

@@ -90,7 +90,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-white dark:bg-white/5">
       <HeaderSettings />
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-15">
         <HeaderProfile />
         
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">

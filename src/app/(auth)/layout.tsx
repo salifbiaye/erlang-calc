@@ -33,14 +33,11 @@ export default function AuthLayout({
                                     />
                                 </Link>
                                 <p className="text-center text-gray-400 dark:text-white/60">
-                                    Free and Open-Source Tailwind CSS Admin Dashboard Template
-                                </p>
+                                   Erlang-Calc est une application dédiée aux professionnels des télécommunications, offrant des outils avancés pour la simulation et le calcul de trafic téléphonique.                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div className="fixed bottom-6 right-6 z-50 hidden sm:block">
-                        <ThemeToggler />
-                    </div>
+
                 </div>
         </div>
     );

@@ -18,7 +18,7 @@ export default function HeaderDashboard({ title = "tableau de bord" }: { title?:
                 </Breadcrumb>
                 <div className="flex items-center p-2 gap-2">
                     <SearchCommand/>
-                    <ThemeToggler/>
+
                 </div>
             </div>
         </header>

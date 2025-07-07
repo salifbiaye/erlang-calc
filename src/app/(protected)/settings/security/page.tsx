@@ -73,7 +73,7 @@ export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-white/5">
       <HeaderSettings />
-      <div className="flex-1 space-y-6 p-6">
+      <div className="flex-1 space-y-6 p-15">
         <div className="flex items-center justify-between pb-4 border-b border-border/40">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary dark:text-primary/80" />

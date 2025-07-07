@@ -427,7 +427,7 @@ export default function CalculatePage() {
                 {/* En-tête de la page */}
                 <HeaderCalculate />
 
-                <div className="flex-1 p-4 md:p-6   ">
+                <div className="flex-1 p-4 md:p-15   ">
                     {/* Titre de la page */}
                     <TitleCalculate />
 

@@ -64,7 +64,7 @@ export default function DashboardPage() {
                 {/* En-tête avec le logo et le titre */}
                 <HeaderDashboard/>
 
-                <div className="flex-1 space-y-8 p-6 ">
+                <div className="flex-1 space-y-8  p-10 ">
 
                     {/* En-tête avec salutation */}
                     <TitleDashboard/>
